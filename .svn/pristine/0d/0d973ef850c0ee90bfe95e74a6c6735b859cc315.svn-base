@@ -1,0 +1,67 @@
+
+package services;
+
+import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.MiscellaneousRepository;
+import domain.Miscellaneous;
+
+@Service
+@Transactional
+public class EndorserService {
+
+	// Managed Repository
+	// =============================================================================
+
+	@Autowired
+	private MiscellaneousRepository	endorserRepository;
+
+
+	// Constructor methods
+	// ============================================================================
+
+	// Simple CRUD methods
+	// ============================================================================
+
+	public Miscellaneous findOne(final int endorserId) {
+		Miscellaneous result;
+
+		result = this.endorserRepository.findOne(endorserId);
+
+		return result;
+	}
+
+	public Collection<Miscellaneous> findAll() {
+		Collection<Miscellaneous> result;
+
+		result = this.endorserRepository.findAll();
+
+		return result;
+	}
+
+	public Miscellaneous save(final Miscellaneous endorser) {
+		Assert.notNull(endorser);
+		Miscellaneous result;
+
+		result = this.endorserRepository.save(endorser);
+
+		return result;
+	}
+
+	// Other Business Methods
+	// =========================================================================
+
+	public Collection<Miscellaneous> findAllByCurriculumId(final int curriculumId) {
+		Collection<Miscellaneous> result;
+
+		result = this.endorserRepository.findAllByCurriculumId(curriculumId);
+
+		return result;
+	}
+
+}

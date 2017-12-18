@@ -1,0 +1,79 @@
+
+package services;
+
+import javax.transaction.Transactional;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import utilities.AbstractTest;
+
+@Transactional
+@ContextConfiguration(locations = {
+	"classpath:spring/junit.xml"
+})
+@RunWith(SpringJUnit4ClassRunner.class)
+public class CandidateServiceTest extends AbstractTest {
+
+	// The SUT
+	// ====================================================
+
+	@Autowired
+	private CandidateService	candidateService;
+
+
+	// Tests
+	// ====================================================
+
+	/*
+	 * To check the validity of a new candidate in our system, the system must check the username,
+	 * the passwords, the name, the surname, the phone, the email and the postal address.
+	 * 
+	 * En este test, se comprueba el registro de un nuevo candidato.
+	 * Para ello introducimos valores correctos e incorrectos para observa el comportamiento de la aplicación.
+	 */
+
+	/*
+	 * Register a new candidate.
+	 * 
+	 * En este caso de uso simularemos el registro de un candidato.
+	 */
+
+	public void candidateRegisterTest(final String username, final Class<?> expected) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(username);
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+
+			caught = oops.getClass();
+
+		}
+
+		this.checkExceptions(expected, caught);
+	}
+
+	//Drivers
+	// ===================================================
+
+	@Test
+	public void driverCandidateRegisterTest() {
+
+		final Object testingData[][] = {
+			// Alguien sin registrar/loguado -> false
+			{
+				null, null
+			}
+
+		};
+		for (int i = 0; i < testingData.length; i++)
+			this.candidateRegisterTest((String) testingData[i][0], (Class<?>) testingData[i][9]);
+	}
+
+}

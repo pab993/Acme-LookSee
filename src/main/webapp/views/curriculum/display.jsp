@@ -1,0 +1,183 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+
+<%@taglib prefix="jstl" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@taglib prefix="security"
+	uri="http://www.springframework.org/security/tags"%>
+<%@taglib prefix="display" uri="http://displaytag.sf.net"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="acme" tagdir="/WEB-INF/tags"%>
+
+<fieldset>
+
+	<legend>
+		<b> <spring:message code="curriculum.personalData" /></b>
+	</legend>
+
+	<spring:message code="curriculum.picture" />
+	:
+	<img height="48" width="48" src="${curriculum.picture}">
+	<br>
+	<spring:message code="curriculum.name" />
+	:
+	<jstl:out value="${curriculum.name}"></jstl:out>
+	<br>
+	<spring:message code="curriculum.email" />
+	:
+	<jstl:out value="${curriculum.email}"></jstl:out>
+	<br>
+	<spring:message code="curriculum.phoneNumber" />
+	:
+	<jstl:out value="${curriculum.phoneNumber}"></jstl:out>
+	<br>
+	<spring:message code="curriculum.linkToLinkedIn" />
+	:
+	<jstl:out value="${curriculum.linkToLinkedIn}"></jstl:out>
+	<br>
+
+</fieldset>
+<br />
+
+<display:table name="endorsers" id="row" requestURI="${requestURI}"
+	pagesize="5" class="displaytag">
+
+	<spring:message code="endorser.name" var="nameHeader" />
+	<display:column property="name" title="${nameHeader}" />
+
+	<spring:message code="endorser.email" var="emailHeader" />
+	<display:column property="email" title="${emailHeader}" />
+
+	<spring:message code="endorser.phoneNumber" var="phoneNumberHeader" />
+	<display:column property="phoneNumber" title="${phoneNumberHeader}" />
+
+	<spring:message code="endorser.linkToLinkedIn"
+		var="linkToLinkedInHeader" />
+	<display:column property="linkToLinkedIn"
+		title="${linkToLinkedInHeader}" />
+
+	<spring:message code="endorser.comments" var="commentsHeader" />
+	<display:column property="comments" title="${commentsHeader}" />
+
+	<jstl:if test="${ principal.id == curriculum.candidate.id}">
+		<display:column>
+			<a href="endorser/edit.do?endorserId=${row.id}"> <spring:message
+					code="curriculum.edit"></spring:message></a>
+		</display:column>
+	</jstl:if>
+
+</display:table>
+
+<jstl:if test="${ principal.id == curriculum.candidate.id}">
+	<a href="endorser/create.do?curriculumId=${curriculum.id }"><spring:message
+			code="endorser.create" /></a>
+</jstl:if>
+
+<br />
+
+<display:table name="miscellaneous" id="row" requestURI="${requestURI}"
+	pagesize="5" class="displaytag">
+
+	<spring:message code="miscellany.title" var="titleHeader" />
+	<display:column property="title" title="${titleHeader}" />
+
+	<spring:message code="miscellany.attachment" var="attachmentHeader" />
+	<display:column property="attachment" title="${attachmentHeader}" />
+
+	<spring:message code="miscellany.comments" var="commentsHeader" />
+	<display:column property="comments" title="${commentsHeader}" />
+
+	<jstl:if test="${ principal.id == curriculum.candidate.id}">
+		<display:column>
+			<a href="miscellaneous/edit.do?miscellanyId=${row.id}"> <spring:message
+					code="curriculum.edit"></spring:message></a>
+		</display:column>
+	</jstl:if>
+
+</display:table>
+
+<jstl:if test="${ principal.id == curriculum.candidate.id}">
+	<a href="miscellaneous/create.do?curriculumId=${curriculum.id }"><spring:message
+			code="miscellany.create" /></a>
+</jstl:if>
+
+<br />
+
+<display:table name="educationRecords" id="row"
+	requestURI="${requestURI}" pagesize="5" class="displaytag">
+
+	<spring:message code="educationRecord.diplomaTitle"
+		var="diplomaTitleHeader" />
+	<display:column property="diplomaTitle" title="${diplomaTitleHeader}" />
+
+	<spring:message code="educationRecord.attachment"
+		var="attachmentHeader" />
+	<display:column property="attachment" title="${attachmentHeader}" />
+
+	<spring:message code="educationRecord.comments" var="commentsHeader" />
+	<display:column property="comments" title="${commentsHeader}" />
+
+	<spring:message code="educationRecord.period.start" var="periodHeader" />
+	<display:column property="period.startPeriod" title="${periodHeader}" format="{0,date,dd/MM/yyyy HH:mm}"/>
+
+	<spring:message code="educationRecord.period.end" var="periodHeader" />
+	<display:column property="period.endPeriod" title="${periodHeader}" format="{0,date,dd/MM/yyyy HH:mm}"/>
+
+	<jstl:if test="${ principal.id == curriculum.candidate.id}">
+		<display:column>
+			<a href="educationRecord/edit.do?educationRecordId=${row.id}"> <spring:message
+					code="curriculum.edit"></spring:message></a>
+		</display:column>
+	</jstl:if>
+
+</display:table>
+
+<jstl:if test="${ principal.id == curriculum.candidate.id}">
+	<a href="educationRecord/create.do?curriculumId=${curriculum.id }"><spring:message
+			code="educationRecord.create" /></a>
+</jstl:if>
+
+<br />
+
+<display:table name="professionalRecords" id="row"
+	requestURI="${requestURI}" pagesize="5" class="displaytag">
+
+	<spring:message code="professionalRecord.companyName"
+		var="companyNameHeader" />
+	<display:column property="companyName" title="${companyNameHeader}" />
+
+	<spring:message code="professionalRecord.role" var="roleHeader" />
+	<display:column property="role" title="${roleHeader}" />
+
+	<spring:message code="professionalRecord.attachment"
+		var="attachmentHeader" />
+	<display:column property="attachment" title="${attachmentHeader}" />
+
+	<spring:message code="professionalRecord.comments" var="commentsHeader" />
+	<display:column property="comments" title="${commentsHeader}" />
+
+	<spring:message code="professionalRecord.period.start" var="periodHeader" />
+	<display:column property="period.startPeriod" title="${periodHeader}" format="{0,date,dd/MM/yyyy HH:mm}"/>
+
+	<spring:message code="professionalRecord.period.end" var="periodHeader" />
+	<display:column property="period.endPeriod" title="${periodHeader}" format="{0,date,dd/MM/yyyy HH:mm}"/>
+
+	<jstl:if test="${ principal.id == curriculum.candidate.id}">
+		<display:column>
+			<a href="professionalRecord/edit.do?professionalRecordId=${row.id}">
+				<spring:message code="curriculum.edit"></spring:message>
+			</a>
+		</display:column>
+	</jstl:if>
+
+</display:table>
+
+<jstl:if test="${ principal.id == curriculum.candidate.id}">
+	<a href="professionalRecord/create.do?curriculumId=${curriculum.id }"><spring:message
+			code="professionalRecord.create" /></a>
+</jstl:if>
+
+<br />

@@ -1,0 +1,89 @@
+
+package services;
+
+import java.util.Collection;
+import java.util.HashSet;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.OfferRepository;
+import domain.Application;
+import domain.Company;
+import domain.Offer;
+
+@Service
+@Transactional
+public class OfferService {
+
+	//Managed Repository =============================================================================
+
+	@Autowired
+	private OfferRepository	offerRepository;
+
+	@Autowired
+	private CompanyService companyService;
+	
+	//Constructor methods ============================================================================
+
+	//Simple CRUD methods ============================================================================
+
+	public Collection<Offer> findAll() {
+		Collection<Offer> result;
+
+		result = this.offerRepository.findAll();
+
+		return result;
+	}
+	
+	public Offer create() {
+		Offer result;
+		Company principal;
+		Collection<Application> applications;
+
+		principal = companyService.findByPrincipal();
+		Assert.notNull(principal);
+		Assert.isInstanceOf(Company.class, principal);
+		
+		applications = new HashSet<Application>();
+		
+		result = new Offer();
+		result.setCompany(principal);
+		result.setApplications(applications);
+
+		return result;
+	}
+	
+	public Offer save(Offer offer) {
+		Assert.notNull(offer);
+		Offer result;
+		Company principal;
+
+		principal = companyService.findByPrincipal();
+		Assert.notNull(principal);
+		result = offerRepository.save(offer);
+
+		return result;
+	}
+	
+	//Other Business Methods =========================================================================
+
+	public Collection<Offer> findAllByCompanyId(int companyId) {
+		Collection<Offer> result;
+
+		result = offerRepository.findAllByCompanyId(companyId);
+
+		return result;
+	}
+
+	public Collection<Offer> getOfferByKeyWord(String keyWord){
+		Assert.notNull(keyWord);
+		Collection<Offer> result;
+		
+		result = offerRepository.searchOfferByWords(keyWord);		
+		
+		return result;
+	}
+}

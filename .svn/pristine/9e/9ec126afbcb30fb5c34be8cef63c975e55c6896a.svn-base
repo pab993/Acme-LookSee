@@ -1,0 +1,66 @@
+
+package controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import security.Authority;
+import services.ActorService;
+import services.CompanyService;
+import domain.Actor;
+import domain.Company;
+
+@Controller
+@RequestMapping("/actor")
+public class ActorController extends AbstractController {
+
+	//Services
+	// =============================================================================
+
+	@Autowired
+	private ActorService	actorService;
+
+	@Autowired
+	private CompanyService	companyService;
+
+
+	// Constructors
+	// ==============================================================================
+
+	public ActorController() {
+		super();
+	}
+
+	//Profile
+	// ==============================================================================
+
+	@RequestMapping(value = "/seeProfile", method = RequestMethod.GET)
+	public ModelAndView verPerfil(@RequestParam(required = false) final Integer actorId) {
+		ModelAndView result;
+		Actor principal;
+
+		if (actorId != null) {
+			Actor actor = actorService.findOne(actorId);
+			principal = actorService.findByPrincipal();
+			result = new ModelAndView("actor/seeProfile");
+			Authority au = new Authority();
+			au.setAuthority("COMPANY");
+			if (actor.getUserAccount().getAuthorities().contains(au)) {
+				Company company = companyService.findOne(actorId);
+				result.addObject("company", company);
+			}
+			result.addObject("principal", principal);
+			result.addObject("actor", actor);
+		} else {
+			principal = actorService.findByPrincipal();
+			result = new ModelAndView("redirect:/actor/seeProfile.do?actorId=" + principal.getId());
+		}
+
+		return result;
+	}
+
+}

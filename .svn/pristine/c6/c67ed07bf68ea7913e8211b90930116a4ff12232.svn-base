@@ -1,0 +1,68 @@
+package services;
+
+import java.util.Collection;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
+
+import repositories.ApplicationRepository;
+import domain.Application;
+import domain.Candidate;
+import domain.Offer;
+
+
+public class ApplicationService {
+
+	//Managed Repository =============================================================================
+
+	@Autowired
+	private ApplicationRepository	applicationRepository;
+	
+	@Autowired
+	private CandidateService candidateService;
+
+	//Constructor methods ============================================================================
+
+	//Simple CRUD methods ============================================================================
+
+	public Application create(Offer offer) {
+		Application result;
+		Candidate principal;
+		Date moment;
+
+		principal = candidateService.findByPrincipal();
+		Assert.notNull(principal);
+		moment = new Date(System.currentTimeMillis());
+		Assert.isTrue(moment.before(offer.getDeadline()));
+
+
+		result = new Application();
+		result.setCandidate(principal);
+		result.setOffer(offer);
+
+		return result;
+	}
+	
+	public Application save(Application application) {
+		Assert.notNull(application);
+		Application result;
+		Candidate principal;
+
+		principal = candidateService.findByPrincipal();
+		Assert.notNull(principal);
+		result = applicationRepository.save(application);
+
+		return result;
+	}
+
+	//Other Business Methods =========================================================================
+
+	public Collection<Application> findAllByCandidateId(int candidateId) {
+		Collection<Application> result;
+
+		result = applicationRepository.findAllByCandidateId(candidateId);
+
+		return result;
+	}
+}

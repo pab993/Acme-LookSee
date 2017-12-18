@@ -1,0 +1,165 @@
+
+package services;
+
+import java.util.Collection;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.ApplicationRepository;
+import domain.Application;
+import domain.Candidate;
+import domain.Offer;
+
+@Service
+@Transactional
+public class ApplicationService {
+
+	//Managed Repository =============================================================================
+
+	@Autowired
+	private ApplicationRepository	applicationRepository;
+
+	@Autowired
+	private CandidateService		candidateService;
+
+
+	//Constructor methods ============================================================================
+
+	//Simple CRUD methods ============================================================================
+
+	public Application create(Offer offer) {
+		Application result;
+		Candidate principal;
+		Date moment;
+
+		principal = candidateService.findByPrincipal();
+		Assert.notNull(principal);
+		moment = new Date(System.currentTimeMillis());
+		Assert.isTrue(moment.before(offer.getDeadline()));
+
+		result = new Application();
+		result.setCandidate(principal);
+		result.setOffer(offer);
+
+		return result;
+	}
+
+	public Application save(Application application) {
+		Assert.notNull(application);
+		Application result;
+		Candidate principal;
+
+		principal = candidateService.findByPrincipal();
+		Assert.notNull(principal);
+		result = applicationRepository.save(application);
+
+		return result;
+	}
+
+	//Other Business Methods =========================================================================
+
+	public Collection<Application> findAllByCandidateId(int candidateId) {
+		Collection<Application> result;
+
+		result = applicationRepository.findAllByCandidateId(candidateId);
+
+		return result;
+	}
+
+	public Integer minNumberOfApplicationsPerCandidate() {
+		Integer result;
+
+		result = applicationRepository.minNumberOfApplicationsPerCandidate();
+
+		return result;
+	}
+
+	public Integer maxNumberOfApplicationsPerCandidate() {
+		Integer result;
+
+		result = applicationRepository.maxNumberOfApplicationsPerCandidate();
+
+		return result;
+	}
+
+	public Double avgNumberOfApplicationsPerCandidate() {
+		Double result;
+
+		result = applicationRepository.avgNumberOfApplicationsPerCandidate();
+
+		return result;
+	}
+
+	public Integer minNumberOfApplicationsPerOffer() {
+		Integer result;
+
+		result = applicationRepository.minNumberOfApplicationsPerOffer();
+
+		return result;
+	}
+
+	public Integer maxNumberOfApplicationsPerOffer() {
+		Integer result;
+
+		result = applicationRepository.maxNumberOfApplicationsPerOffer();
+
+		return result;
+	}
+
+	public Double avgNumberOfApplicationsPerOffer() {
+		Double result;
+
+		result = applicationRepository.avgNumberOfApplicationsPerOffer();
+
+		return result;
+	}
+
+	public Integer minNumberOfPendingApplicationsPerCompany() {
+		Integer result = applicationRepository.minNumberOfPendingApplicationsPerCompany();
+		return result;
+	}
+
+	public Integer maxNumberOfPendingApplicationsPerCompany() {
+		Integer result = applicationRepository.maxNumberOfPendingApplicationsPerCompany();
+		return result;
+	}
+
+	public Double avgNumberOfPendingApplicationsPerCompany() {
+		Double result = applicationRepository.avgNumberOfPendingApplicationsPerCompany();
+		return result;
+	}
+
+	public Integer minNumberOfAcceptedApplicationsPerCompany() {
+		Integer result = applicationRepository.minNumberOfAcceptedApplicationsPerCompany();
+		return result;
+	}
+
+	public Integer maxNumberOfAcceptedApplicationsPerCompany() {
+		Integer result = applicationRepository.maxNumberOfAcceptedApplicationsPerCompany();
+		return result;
+	}
+
+	public Double avgNumberOfAcceptedApplicationsPerCompany() {
+		Double result = applicationRepository.avgNumberOfAcceptedApplicationsPerCompany();
+		return result;
+	}
+
+	public Integer minNumberOfRejectedApplicationsPerCompany() {
+		Integer result = applicationRepository.minNumberOfRejectedApplicationsPerCompany();
+		return result;
+	}
+
+	public Integer maxNumberOfRejectedApplicationsPerCompany() {
+		Integer result = applicationRepository.maxNumberOfRejectedApplicationsPerCompany();
+		return result;
+	}
+
+	public Double avgNumberOfRejectedApplicationsPerCompany() {
+		Double result = applicationRepository.avgNumberOfRejectedApplicationsPerCompany();
+		return result;
+	}
+}

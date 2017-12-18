@@ -1,0 +1,78 @@
+
+package services;
+
+import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.CurriculumRepository;
+import domain.Candidate;
+import domain.Curriculum;
+
+@Service
+@Transactional
+public class CurriculumService {
+
+	//Managed Repository =============================================================================
+
+	@Autowired
+	private CurriculumRepository	curriculumRepository;
+
+	@Autowired
+	private CandidateService		candidateService;
+
+
+	//Constructor methods ============================================================================
+
+	//Simple CRUD methods ============================================================================
+
+	public Curriculum findOne(final int curriculumId) {
+		Curriculum result;
+
+		result = this.curriculumRepository.findOne(curriculumId);
+
+		return result;
+	}
+
+	public Collection<Curriculum> findAll() {
+		Collection<Curriculum> result;
+
+		result = this.curriculumRepository.findAll();
+
+		return result;
+	}
+
+	//Other Business Methods =========================================================================
+
+	public Collection<Curriculum> findAllByCandidateId(final int candidateId) {
+		Collection<Curriculum> result;
+
+		result = this.curriculumRepository.findAllByCandidateId(candidateId);
+
+		return result;
+	}
+
+	public Collection<Curriculum> getCurriculumByKeyWord(final String keyWord) {
+		Assert.notNull(keyWord);
+		Collection<Curriculum> result;
+		Candidate principal;
+
+		principal = this.candidateService.findByPrincipal();
+		Assert.isInstanceOf(Candidate.class, principal);
+
+		result = this.curriculumRepository.searchCurriculumByWords(keyWord);
+
+		return result;
+	}
+
+	public Double avgNumberCurriculumPerCandidate() {
+		Double avg;
+
+		avg = this.curriculumRepository.avgNumberCurriculumPerCandidate();
+		return avg;
+	}
+
+}

@@ -1,0 +1,36 @@
+# messages.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+
+application.createMoment				= Create Moment
+application.status						= Status
+application.offer						= Offer
+
+apply.status.accepted 					= ACCEPTED
+apply.status.pending  					= PENDING
+apply.status.rejected  					= REJECTED
+
+application.order						= Order applies:
+application.orderCreateAsc				= By create moment (asc)
+application.orderCreateDesc				= By create moment (desc)
+application.orderStatus					= By status
+application.orderDeadline				= By deadline
+
+choose									= Choose a CV
+
+application.edit						= Edit application
+application.notEdit						= Is not possible to edit
+
+
+application.submit						= Submit
+application.cancel						= Cancel
+
+application.save.error					= Cannot commit operation, the deadline is elapsed or you've already applied
+
+
+

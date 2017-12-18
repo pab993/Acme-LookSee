@@ -1,0 +1,77 @@
+# messages_es.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+master.page.administrator			= Administrador
+master.page.administrator.action.1	= Acción 1
+master.page.administrator.action.2	= Acción 2
+
+master.page.curriculum				= Curriculum
+
+master.page.application				= Peticiones
+
+master.page.customer				= Cliente
+master.page.customer.action.1		= Acción 1
+master.page.customer.action.2		= Acción 2
+
+master.page.actor.profile			= Ver perfil
+
+master.page.profile 				= Perfil
+master.page.profile.action.1 		= Acción 1
+master.page.profile.action.2		= Acción 2
+master.page.profile.action.3		= Acción 3
+
+master.page.login 					= Entrar
+master.page.logout 					= Salir
+
+master.page.eraseMe					= Información sobre datos personales
+master.page.mostrarBarraCookies		= Cookies
+master.page.barraCookies1			= Se hace uso de las cookies JSESSIONID y LANGUAGE
+master.page.barraCookies2			= Más información
+
+master.page.register.candidate		= Registrarse como candidato
+master.page.register.company		= Registrarse como compañía
+
+master.page.company.offer			= Ofertas
+master.page.company.offer.create	= Crear nueva oferta
+
+master.page.company.offer.list		= Mis ofertas
+
+master.page.dashboard				= Dashboard
+
+dashboard.candidates.number.curricula			= La lista de candidatos, ordenadas en orden descendiente por su número de curricula.
+dashboard.companies.number.offer				= La lista de compañías, ordenadas en orden descendiente por su número de ofertas.
+dashboard.avg.curriculum.per.candidate			= El número medio de curricula por candidato.
+dashboard.avg.offer.per.company					= El numero medio de ofertas por compañía.
+dashboard.candidates.more.curricula				= Los candidatos que han registrado más curricula.
+dashboard.companies.more.offers					= Las compañías que han registrado más ofertas.
+dashboard.minAvgMax.applications.candidate		= La media, el mínimo y el máximo numero de solicitudes por candidato.
+dashboard.min.applications.candidate			= El mínimo: 
+dashboard.max.applications.candidate			= El máximo:  
+dashboard.avg.applications.candidate			= La media:  
+dashboard.minAvgMax.applications.offer			= La media, el mínimo y el máximo numero de solicitudes por oferta.
+dashboard.min.applications.offer				= El mínimo: 
+dashboard.max.applications.offer				= El máximo:  
+dashboard.avg.applications.offer				= La media:  
+dashboard.minAvgMax.applications.pending		= La media, el mínimo y el máximo numero de solicitudes pendientes por compañía.
+dashboard.min.applications.pending				= El mínimo: 
+dashboard.max.applications.pending				= El máximo:  
+dashboard.avg.applications.pending				= La media:  
+dashboard.minAvgMax.applications.accepted		= La media, el mínimo y el máximo numero de solicitudes aceptadas por compañía.
+dashboard.min.applications.acccepted			= El mínimo: 
+dashboard.max.applications.accepted				= El máximo:  
+dashboard.avg.applications.accepted				= La media:  
+dashboard.minAvgMax.applications.rejected		= La media, el mínimo y el máximo numero de solicitudes rechazadas por compañía.
+dashboard.min.applications.rejected				= El mínimo: 
+dashboard.max.applications.rejected				= El máximo:  
+dashboard.avg.applications.rejected				= La media:
+master.page.company.offer.list		= Mis ofertas
+
+master.page.company					= Lista de empresas
+master.page.offer					= Lista de ofertas
+master.page.searchOffer				= Buscador de ofertas
+master.page.searchCv				= Buscar Cvs

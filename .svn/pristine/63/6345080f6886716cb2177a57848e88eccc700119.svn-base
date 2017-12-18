@@ -1,0 +1,86 @@
+
+package services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.ActorRepository;
+import security.Authority;
+import security.LoginService;
+import security.UserAccount;
+import domain.Actor;
+import domain.Company;
+import forms.ActorForm;
+
+@Service
+@Transactional
+public class ActorService {
+
+	//Managed Repository =============================================================================
+
+	@Autowired
+	private ActorRepository	actorRepository;
+
+	//Services
+	// ===============================================================================================
+
+	@Autowired
+	private CompanyService	companyService;
+
+
+	//Other Business Methods =========================================================================
+
+	public Actor findByPrincipal() {
+		Actor result;
+		UserAccount userAccount;
+
+		userAccount = LoginService.getPrincipal();
+		Assert.notNull(userAccount);
+
+		result = this.findByUserAccount(userAccount);
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Actor findByUserAccount(final UserAccount userAccount) {
+		Assert.notNull(userAccount);
+		Actor result;
+
+		result = this.actorRepository.findByUserAccountId(userAccount.getId());
+
+		return result;
+	}
+
+	public Actor findOne(int actorId) {
+		Actor result;
+
+		result = actorRepository.findOne(actorId);
+
+		return result;
+	}
+
+	public ActorForm reconstructToForm(Actor actor) {
+		ActorForm actorForm = new ActorForm();
+		Authority au = new Authority();
+		au.setAuthority("COMPANY");
+
+		Actor principal = findByPrincipal();
+
+		actorForm.setName(actor.getName());
+		actorForm.setSurname(actor.getSurname());
+		actorForm.setPhone(actor.getPhone());
+		actorForm.setEmail(actor.getEmail());
+		actorForm.setPostalAddress(actor.getPostalAddress());
+
+		if (principal.getUserAccount().getAuthorities().contains(au)) {
+			Company companyPrincipal = companyService.findByPrincipal();
+			actorForm.setVat(companyPrincipal.getVat());
+		}
+
+		return actorForm;
+
+	}
+}

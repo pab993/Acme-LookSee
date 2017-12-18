@@ -1,0 +1,89 @@
+
+package domain;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.hibernate.validator.constraints.URL;
+
+@Entity
+@Access(AccessType.PROPERTY)
+public class ProfessionalRecord extends DomainEntity {
+
+	//Attributes 
+	// =================================================================
+
+	private String	companyName;
+	private Period	period;
+	private String	role;
+	private String	attachment;
+	private String	comments;
+
+
+	@NotBlank
+	@SafeHtml
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	@Valid
+	@NotNull
+	public Period getPeriod() {
+		return period;
+	}
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
+	@NotBlank
+	@SafeHtml
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	@URL
+	@SafeHtml
+	public String getAttachment() {
+		return attachment;
+	}
+	public void setAttachment(String attachment) {
+		this.attachment = attachment;
+	}
+
+	@SafeHtml
+	public String getComments() {
+		return comments;
+	}
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+
+	//Relationships
+	// =================================================================
+
+	private Curriculum	curriculum;
+
+
+	@Valid
+	@ManyToOne(optional = false)
+	public Curriculum getCurriculum() {
+		return curriculum;
+	}
+	public void setCurriculum(Curriculum curriculum) {
+		this.curriculum = curriculum;
+	}
+
+}

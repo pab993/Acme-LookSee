@@ -1,0 +1,164 @@
+
+package services;
+
+import javax.transaction.Transactional;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import utilities.AbstractTest;
+import domain.Application;
+import domain.Curriculum;
+import domain.Offer;
+
+@Transactional
+@ContextConfiguration(locations = {
+	"classpath:spring/junit.xml"
+})
+@RunWith(SpringJUnit4ClassRunner.class)
+public class ApplicationServiceTest extends AbstractTest {
+
+	// The SUT
+	// ====================================================
+
+	@Autowired
+	private ApplicationService	applicationService;
+
+	@Autowired
+	private CurriculumService	curriculumService;
+
+	@Autowired
+	private OfferService		offerService;
+
+
+	// Tests
+	// ====================================================
+
+	/*
+	 * To check the validity of an application, the system must check every
+	 * field of the edit form.
+	 * 
+	 * En este test, se comprueba la validez de las aplicaciones, así el
+	 * sistema debe validar que los campos introducidos son correctos
+	 */
+
+	/*
+	 * Create a new one.
+	 * 
+	 * En este caso de uso un candidato puede crear un nuevo
+	 * aplicacion.
+	 */
+
+	public void createApplicationTest(final String username, final int offerId, final int curriculumId, final Class<?> expected) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(username);
+
+			final Curriculum curriculum = this.curriculumService.findOne(curriculumId);
+			final Offer offer = this.offerService.findOne(offerId);
+
+			final Application application = this.applicationService.create(offer);
+
+			application.setCurriculum(curriculum);
+
+			this.applicationService.save(application);
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+
+			caught = oops.getClass();
+
+		}
+
+		this.checkExceptions(expected, caught);
+	}
+
+	/*
+	 * Edit an apply.
+	 * 
+	 * En este caso de uso una compañia puede cambiar el status de una aplicacion.
+	 */
+	public void editApplicationTest(final String username, final int applicationId, final String status, final Class<?> expected) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(username);
+
+			final Application application = this.applicationService.findOne(applicationId);
+
+			application.setStatus(status);
+
+			this.applicationService.saveStatus(application);
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+
+			caught = oops.getClass();
+
+		}
+
+		this.checkExceptions(expected, caught);
+	}
+
+	// Drivers
+	// ===================================================
+
+	//@Test
+	public void driverCreateApplicationTest() {
+
+		final Object testingData[][] = {
+			// Alguien sin registrar/logueado -> false
+			{
+				null, 17, 18, IllegalArgumentException.class
+			},
+			// Un candidato aplicando por una oferta valida -> true
+			{
+				"candidate1", 17, 18, null
+			},
+			// Edición por alguien que no es el propietario -> false
+			{
+				"candidate2", 17, 18, IllegalArgumentException.class
+			},
+			// Edición por alguien que no es candidato -> false
+			{
+				"company1", 17, 18, IllegalArgumentException.class
+			}
+
+		};
+		for (int i = 0; i < testingData.length; i++)
+			this.createApplicationTest((String) testingData[i][0], (int) testingData[i][1], (int) testingData[i][2], (Class<?>) testingData[i][3]);
+	}
+
+	@Test
+	public void driverEditApplicationTest() {
+
+		final Object testingData[][] = {
+			// Alguien sin registrar/logueado -> false
+			{
+				null, 32, "REJECTED", IllegalArgumentException.class
+			},
+			// Un candidato aplicando por una oferta valida -> true
+			{
+				"company1", 32, "REJECTED", null
+			},
+			// Edición por alguien que no es el propietario -> false
+			{
+				"company2", 32, "REJECTED", IllegalArgumentException.class
+			},
+			// Edición por alguien que no es una compañia -> false
+			{
+				"candidate1", 32, "REJECTED", IllegalArgumentException.class
+			}
+
+		};
+		for (int i = 0; i < testingData.length; i++)
+			this.editApplicationTest((String) testingData[i][0], (int) testingData[i][1], (String) testingData[i][2], (Class<?>) testingData[i][3]);
+	}
+
+}

@@ -1,0 +1,188 @@
+
+package services;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.CurriculumRepository;
+import domain.Candidate;
+import domain.Curriculum;
+import domain.EducationRecord;
+import domain.Endorser;
+import domain.Miscellaneous;
+import domain.ProfessionalRecord;
+
+@Service
+@Transactional
+public class CurriculumService {
+
+	// Managed Repository
+	// =============================================================================
+
+	@Autowired
+	private CurriculumRepository		curriculumRepository;
+
+	@Autowired
+	private CandidateService			candidateService;
+
+	@Autowired
+	private MiscellanyService			miscellaneousService;
+
+	@Autowired
+	private EndorserService				endorserService;
+
+	@Autowired
+	private EducationRecordService		educationRecordService;
+
+	@Autowired
+	private ProfessionalRecordService	professionalRecordService;
+
+
+	// Constructor methods
+	// ============================================================================
+
+	// Simple CRUD methods
+	// ============================================================================
+
+	public Curriculum create() {
+		Curriculum result;
+		Candidate principal;
+		String ticker;
+
+		result = new Curriculum();
+		principal = this.candidateService.findByPrincipal();
+		ticker = this.generateTicker();
+
+		result.setCandidate(principal);
+		result.setCopy(false);
+		result.setTicker(ticker);
+
+		return result;
+	}
+
+	public Curriculum createCopy(final Curriculum curriculum) {
+		final Curriculum result = new Curriculum();
+
+		result.setCandidate(curriculum.getCandidate());
+		result.setEmail(curriculum.getEmail());
+		result.setLinkToLinkedIn(curriculum.getLinkToLinkedIn());
+		result.setName(curriculum.getName());
+		result.setPhoneNumber(curriculum.getPhoneNumber());
+		result.setPicture(curriculum.getPicture());
+		result.setTicker(curriculum.getTicker());
+		result.setCopy(true);
+
+		this.save(result);
+
+		for (final Miscellaneous m : curriculum.getMiscellaneouss()) {
+			m.setId(0);
+			m.setVersion(0);
+			m.setCurriculum(result);
+			this.miscellaneousService.save(m);
+		}
+
+		for (final Endorser e : curriculum.getEndorsers()) {
+			e.setId(0);
+			e.setVersion(0);
+			e.setCurriculum(result);
+			this.endorserService.save(e);
+		}
+
+		for (final EducationRecord er : curriculum.getEducationRecords()) {
+			er.setId(0);
+			er.setVersion(0);
+			er.setCurriculum(result);
+			this.educationRecordService.save(er);
+		}
+
+		for (final ProfessionalRecord pr : curriculum.getProfessionalRecords()) {
+			pr.setId(0);
+			pr.setVersion(0);
+			pr.setCurriculum(result);
+			this.professionalRecordService.save(pr);
+		}
+
+		return result;
+	}
+
+	public Curriculum findOne(final int curriculumId) {
+		Curriculum result;
+
+		result = this.curriculumRepository.findOne(curriculumId);
+
+		return result;
+	}
+
+	public Collection<Curriculum> findAll() {
+		Collection<Curriculum> result;
+
+		result = this.curriculumRepository.findAll();
+
+		return result;
+	}
+
+	// Other Business Methods
+	// =========================================================================
+
+	public Collection<Curriculum> findAllByCandidateId(final int candidateId) {
+		Collection<Curriculum> result;
+
+		result = this.curriculumRepository.findAllByCandidateId(candidateId);
+
+		return result;
+	}
+
+	public Collection<Curriculum> getCurriculumByKeyWord(final String keyWord) {
+		Assert.notNull(keyWord);
+		Collection<Curriculum> result;
+		Candidate principal;
+
+		principal = this.candidateService.findByPrincipal();
+		Assert.isInstanceOf(Candidate.class, principal);
+
+		result = this.curriculumRepository.searchCurriculumByWords(keyWord);
+
+		return result;
+	}
+
+	public Double avgNumberCurriculumPerCandidate() {
+		Double avg;
+
+		avg = this.curriculumRepository.avgNumberCurriculumPerCandidate();
+		return avg;
+	}
+
+	public Curriculum save(final Curriculum curriculum) {
+		Assert.notNull(curriculum);
+		Curriculum result;
+
+		result = this.curriculumRepository.save(curriculum);
+
+		return result;
+	}
+
+	public String generateTicker() {
+		String result = "";
+		Date moment;
+
+		final DateFormat formatoMoment = new SimpleDateFormat("yyyy-MM-dd");
+		;
+		final String characters = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789";
+
+		moment = new Date(System.currentTimeMillis());
+		result = formatoMoment.format(moment) + "-";
+
+		for (int i = 0; i < 5; i++)
+			result += characters.charAt((int) (Math.random() * 64));
+
+		return result;
+	}
+
+}

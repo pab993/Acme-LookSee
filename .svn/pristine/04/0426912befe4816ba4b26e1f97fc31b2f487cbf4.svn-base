@@ -1,0 +1,60 @@
+package services;
+
+import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.CurriculumRepository;
+import domain.Candidate;
+import domain.Curriculum;
+
+@Service
+@Transactional
+public class CurriculumService {
+
+	//Managed Repository =============================================================================
+
+	@Autowired
+	private CurriculumRepository	curriculumRepository;
+
+	@Autowired
+	private CandidateService candidateService;
+	
+	//Constructor methods ============================================================================
+
+	//Simple CRUD methods ============================================================================
+
+	public Curriculum findOne(int curriculumId) {
+		Curriculum result;
+
+		result = curriculumRepository.findOne(curriculumId);
+
+		return result;
+	}
+	
+	//Other Business Methods =========================================================================
+
+	public Collection<Curriculum> findAllByCandidateId(int candidateId) {
+		Collection<Curriculum> result;
+
+		result = curriculumRepository.findAllByCandidateId(candidateId);
+
+		return result;
+	}
+	
+//	public Collection<Curriculum> getOfferByKeyWord(String keyWord){
+//		Assert.notNull(keyWord);
+//		Collection<Curriculum> result;
+//		Candidate principal;
+//
+//		principal = candidateService.findByPrincipal();
+//		Assert.isInstanceOf(Candidate.class, principal);
+//		
+//		result = curriculumRepository.searchCurriculumByWords(keyWord);		
+//		
+//		return result;
+//	}
+}

@@ -1,0 +1,27 @@
+# messages_es.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+application.createMoment				= Momento de Creación
+application.status						= Estado
+application.offer						= Oferta
+
+application.order						= Ordenar las aplicaciones:
+application.orderCreateAsc				= Por momento de creación (ascendente)
+application.orderCreateDesc				= Por momento de creación (descendiente)
+application.orderStatus					= Por estado
+application.orderDeadline				= Por fecha limite
+
+choose									= Escoge un CV
+
+application.edit						= Editar petición
+application.notEdit						= No es posible editar
+
+application.submit						= Enviar
+application.cancel						= Cancelar
+
+application.save.error					= No se puede realizar la operación, ha pasado la fecha limite o ya has aplicado

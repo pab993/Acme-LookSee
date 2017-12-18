@@ -1,0 +1,28 @@
+# messages.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+company.name			= Name
+company.surname			= Surname
+company.email			= Email
+company.phone			= Phone
+company.postalAddress	= Postal Address
+company.vat				= Tax identification number (VAT)
+company.listByCompany	= List of offers
+
+company.accountData				= Data of the new account
+company.username				= User name
+company.password				= Password
+company.repeatPassword			= Repeat password
+company.personalData			= Personal data
+company.accept					= Accept
+company.lopd					= Terms and conditions
+company.submit					= Register
+
+company.password.mismatch		= Passwords cannot be blank and must match
+company.postalAddress.error		= The pattern of the postal address is not correct
+company.save.error				= Cannot commit this operation

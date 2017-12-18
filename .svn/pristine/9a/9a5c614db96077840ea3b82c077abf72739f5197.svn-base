@@ -1,0 +1,199 @@
+
+package services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
+import repositories.ActorRepository;
+import security.Authority;
+import security.LoginService;
+import security.UserAccount;
+import domain.Actor;
+import domain.Company;
+import forms.ActorForm;
+
+@Service
+@Transactional
+public class ActorService {
+
+	//Managed Repository =============================================================================
+
+	@Autowired
+	private ActorRepository	actorRepository;
+
+	//Services
+	// ===============================================================================================
+
+	@Autowired
+	private CompanyService	companyService;
+
+
+	//SCRUDs Methods
+	//===============================================================================================
+
+	public Actor save(Actor actor, String vat) {
+		Assert.notNull(actor);
+		Assert.notNull(actor.getUserAccount());
+		Actor result;
+		Authority au = new Authority();
+		au.setAuthority("COMPANY");
+		Actor principal = findByPrincipal();
+		if (principal.getUserAccount().getAuthorities().contains(au)) {
+			Company companyPrincipal = companyService.findByPrincipal();
+			companyPrincipal.setVat(vat);
+		}
+
+		result = actorRepository.save(actor);
+
+		return result;
+	}
+
+	//Other Business Methods =========================================================================
+
+	public Actor findByPrincipal() {
+		Actor result;
+		UserAccount userAccount;
+
+		userAccount = LoginService.getPrincipal();
+		Assert.notNull(userAccount);
+
+		result = this.findByUserAccount(userAccount);
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Actor findByUserAccount(final UserAccount userAccount) {
+		Assert.notNull(userAccount);
+		Actor result;
+
+		result = this.actorRepository.findByUserAccountId(userAccount.getId());
+
+		return result;
+	}
+
+	public Actor findOne(int actorId) {
+		Actor result;
+
+		result = actorRepository.findOne(actorId);
+
+		return result;
+	}
+
+	public ActorForm reconstructToForm(Actor actor) {
+		ActorForm actorForm = new ActorForm();
+		Authority au = new Authority();
+		au.setAuthority("COMPANY");
+
+		Actor principal = findByPrincipal();
+
+		actorForm.setName(actor.getName());
+		actorForm.setSurname(actor.getSurname());
+		actorForm.setPhone(actor.getPhone());
+		actorForm.setEmail(actor.getEmail());
+		actorForm.setPostalAddress(actor.getPostalAddress());
+
+		if (principal.getUserAccount().getAuthorities().contains(au)) {
+			Company companyPrincipal = companyService.findByPrincipal();
+			actorForm.setVat(companyPrincipal.getVat());
+		}
+
+		return actorForm;
+
+	}
+
+	public Actor reconstruct1(ActorForm actorForm, BindingResult binding) {
+		Actor result;
+		Authority au = new Authority();
+		au.setAuthority("COMPANY");
+
+		result = findByPrincipal();
+
+		comprobarPostalAddress(actorForm.getPostalAddress(), binding);
+		if (result.getUserAccount().getAuthorities().contains(au)) {
+			comprobarVat(actorForm.getVat(), binding);
+		}
+
+		return result;
+	}
+
+	//Por alguna razón aquí se guardan los cambios en la base de datos en este metodo. Así que aquí hago un rollback.
+	public Actor reconstruct2(ActorForm actorForm, BindingResult binding) {
+		Actor result;
+		Authority au = new Authority();
+		au.setAuthority("COMPANY");
+
+		result = findByPrincipal();
+		result.setName(actorForm.getName());
+		result.setSurname(actorForm.getSurname());
+		result.setPhone(actorForm.getPhone());
+		result.setEmail(actorForm.getEmail());
+		result.setPostalAddress(actorForm.getPostalAddress());
+
+		comprobarPostalAddress(actorForm.getPostalAddress(), binding);
+		if (result.getUserAccount().getAuthorities().contains(au)) {
+			comprobarVat(actorForm.getVat(), binding);
+		}
+
+		return result;
+	}
+
+	private boolean comprobarPostalAddress(String postalAddress, BindingResult binding) {
+		FieldError error;
+		String[] codigos;
+		boolean result;
+
+		if (postalAddress == null || postalAddress.isEmpty()) {
+			result = true;
+		} else {
+			result = false;
+		}
+
+		if (!result) {
+			if (postalAddress.matches("^[0-9]{5}$")) {
+				result = true;
+			} else {
+				codigos = new String[1];
+				codigos[0] = "actor.postalAddress.error";
+				error = new FieldError("actorForm", "postalAddress", postalAddress, false, codigos, null, "");
+				binding.addError(error);
+			}
+		}
+
+		return result;
+	}
+
+	private boolean comprobarVat(String vat, BindingResult binding) {
+		FieldError error;
+		String[] codigos;
+		boolean result;
+
+		if (vat == null || vat.isEmpty()) {
+			result = true;
+			codigos = new String[1];
+			codigos[0] = "actor.vat.empty.error";
+			error = new FieldError("actorForm", "vat", vat, false, codigos, null, "");
+			binding.addError(error);
+		} else {
+			result = false;
+		}
+
+		if (!result) {
+			if (vat.matches("^[A-Z]{2}?[0-9]{0,12}$")) {
+				result = true;
+			} else {
+				codigos = new String[1];
+				codigos[0] = "actor.vat.error";
+				error = new FieldError("actorForm", "vat", vat, false, codigos, null, "");
+				binding.addError(error);
+			}
+		}
+
+		return result;
+
+	}
+}

@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+ * PopulateDatabase.xml
+ *
+ * Copyright (C) 2017 Universidad de Sevilla
+ * 
+ * The use of this project is hereby constrained to the conditions of the 
+ * TDG Licence, a copy of which you may download from 
+ * http://www.tdg-seville.info/License.html
+ -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	">
+	
+	<!-- User accounts -->
+
+	<bean id="userAccount1" class="security.UserAccount">
+		<property name="username" value="admin" />
+		<property name="password" value="21232f297a57a5a743894a0e4a801fc3" />
+		<property name="authorities">
+			<list>
+				<bean class="security.Authority">
+					<property name="authority" value="ADMIN" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="userAccount2" class="security.UserAccount">
+		<property name="username" value="candidate1" />
+		<property name="password" value="e7a02779bc8c3b75ffd0039ced68c8f8" />
+		<property name="authorities">
+			<list>
+				<bean class="security.Authority">
+					<property name="authority" value="CANDIDATE" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="userAccount3" class="security.UserAccount">
+		<property name="username" value="company1" />
+		<property name="password" value="df655f976f7c9d3263815bd981225cd9" />
+		<property name="authorities">
+			<list>
+				<bean class="security.Authority">
+					<property name="authority" value="COMPANY" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="userAccount4" class="security.UserAccount">
+		<property name="username" value="candidate2" />
+		<property name="password" value="f61b2fa651fbf329a43d2e100c1f4425" />
+		<property name="authorities">
+			<list>
+				<bean class="security.Authority">
+					<property name="authority" value="CANDIDATE" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="userAccount5" class="security.UserAccount">
+		<property name="username" value="candidate3" />
+		<property name="password" value="dbdcdd06d361d13251413d0941bc87cd" />
+		<property name="authorities">
+			<list>
+				<bean class="security.Authority">
+					<property name="authority" value="CANDIDATE" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="userAccount6" class="security.UserAccount">
+		<property name="username" value="company2" />
+		<property name="password" value="d196a28097115067fefd73d25b0c0be8" />
+		<property name="authorities">
+			<list>
+				<bean class="security.Authority">
+					<property name="authority" value="COMPANY" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Other domain beans come here -->	
+
+	<!-- ADMINISTRATORS -->
+
+	<bean id="admin" class="domain.Administrator" >
+		<property name="name" value="NameAdmin"  />
+		<property name="surname" value="SurnameAdmin" />
+		<property name="phone" value="+ES647382899" />
+		<property name="email" value="admin@admin.com" />
+		<property name="postalAddress" value="41008"  />
+		<property name="userAccount" ref="userAccount1" />
+	</bean>
+	
+	<!-- CANDIDATERS -->
+
+	<bean id="candidate1" class="domain.Candidate" >
+		<property name="name" value="NameCandidate1"  />
+		<property name="surname" value="SurnameCandidate1" />
+		<property name="phone" value="+ES647382822" />
+		<property name="email" value="candidate1@candidate1.com" />
+		<property name="postalAddress" value="41006"  />
+		<property name="userAccount" ref="userAccount2" />
+		<property name="curriculums">
+			<list>
+				<ref bean="curriculum1" />
+			</list>
+		</property>
+		<property name="applications">
+			<list>
+				<ref bean="application1" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="candidate2" class="domain.Candidate" >
+		<property name="name" value="NameCandidate2"  />
+		<property name="surname" value="SurnameCandidate2" />
+		<property name="phone" value="+ES647311822" />
+		<property name="email" value="candidate2@candidate2.com" />
+		<property name="postalAddress" value="41006"  />
+		<property name="userAccount" ref="userAccount4" />
+		<property name="curriculums">
+			<list>
+				
+			</list>
+		</property>
+		<property name="applications">
+			<list>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="candidate3" class="domain.Candidate" >
+		<property name="name" value="NameCandidate3"  />
+		<property name="surname" value="SurnameCandidate3" />
+		<property name="phone" value="+ES647311822" />
+		<property name="email" value="candidate3@candidate3.com" />
+		<property name="postalAddress" value="41506"  />
+		<property name="userAccount" ref="userAccount5" />
+		<property name="curriculums">
+			<list>
+				<ref bean="curriculum2"/>
+			</list>
+		</property>
+		<property name="applications">
+			<list>
+				<ref bean="application2"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- COMPANIES -->
+
+	<bean id="company1" class="domain.Company" >
+		<property name="name" value="NameCompany1"  />
+		<property name="surname" value="SurnameCompany1" />
+		<property name="phone" value="+ES647382899" />
+		<property name="email" value="company1@company1.com" />
+		<property name="postalAddress" value="41003"  />
+		<property name="vat" value="ES1234567890"/>
+		<property name="userAccount" ref="userAccount3" />
+		
+		<property name="offers">
+			<list>
+				<ref bean="offer1" />
+				<ref bean="offer2"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="company2" class="domain.Company" >
+		<property name="name" value="NameCompany2"  />
+		<property name="surname" value="SurnameCompany2" />
+		<property name="phone" value="+ES641382819" />
+		<property name="email" value="company2@company2.com" />
+		<property name="postalAddress" value="41083"  />
+		<property name="vat" value="ES1234547890"/>
+		<property name="userAccount" ref="userAccount6" />
+		
+		<property name="offers">
+			<list>
+				<ref bean="offer3"/>
+			</list>
+		</property>
+	</bean>
+
+	<!-- OFFERS -->
+
+	<bean id="offer1" class="domain.Offer" >
+		<property name="createMoment" value="01/03/2015 12:00"  />
+		<property name="title" value="title1" />
+		<property name="description" value="description1" />
+		<property name="salary" ref="salary1" />
+		<property name="deadline" value="11/08/2017 23:00"  />
+		<property name="draft" value="false" />
+		
+		<property name="company" ref="company1" />
+		
+		<property name="applications">
+			<list>
+				<ref bean="application1" />
+			</list>
+		</property>
+	</bean>
+	
+ 	<bean id="offer2" class="domain.Offer" >
+		<property name="createMoment" value="12/04/2015 12:00"  />
+		<property name="title" value="title2" />
+		<property name="description" value="description2" />
+		<property name="salary" ref="salary2" />
+		<property name="deadline" value="11/08/2017 23:00"  />
+		<property name="draft" value="false" />
+		
+		<property name="company" ref="company1" />
+		
+		<property name="applications">
+			<list>
+				<ref bean="application2" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="offer3" class="domain.Offer" >
+		<property name="createMoment" value="12/04/2015 12:00"  />
+		<property name="title" value="title3" />
+		<property name="description" value="description3" />
+		<property name="salary" ref="salary3" />
+		<property name="deadline" value="11/10/2017 03:00"  />
+		<property name="draft" value="true" />
+		
+		<property name="company" ref="company2" />
+		
+		<property name="applications">
+			<list>
+			
+			</list>
+		</property>
+	</bean>
+	
+	
+	<!-- CURRICULUM -->
+	
+	<bean id="curriculum1" class="domain.Curriculum">
+		<property name="ticker" value="2016-01-01-ef53"/>
+		<property name="name" value="nameCandidate1"/>
+		<property name="picture" value="https://www.picture.com"/>
+		<property name="email" value="candidate1@gmail.com"/>
+		<property name="phoneNumber" value="+ES678365234"/>
+		<property name="linkToLinkedIn" value="https://es.linkedin.com/"/>
+		<property name="copy" value="false"/>
+		<property name="candidate" ref="candidate1"/>
+		<property name="professionalRecords">
+			<list>
+				<ref bean="professionalRecord1"/>
+			</list>
+		</property>
+		<property name="miscellaneouss">
+			<list>
+				<ref bean="miscellaneous1"/>
+			</list>
+		</property>
+		<property name="EducationRecords">
+			<list>
+				<ref bean="educationRecord1"/>
+			</list>
+		</property>
+		<property name="Endorsers">
+			<list>
+				<ref bean="endorser1"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="curriculum2" class="domain.Curriculum">
+		<property name="ticker" value="2017-01-05-ef53"/>
+		<property name="name" value="nameCandidate3"/>
+		<property name="picture" value="https://www.picture.com"/>
+		<property name="email" value="candidate3@gmail.com"/>
+		<property name="phoneNumber" value="+ES678363234"/>
+		<property name="linkToLinkedIn" value="https://es.linkedin.com/"/>
+		<property name="copy" value="false"/>
+		<property name="candidate" ref="candidate3"/>
+		<property name="professionalRecords">
+			<list>
+			</list>
+		</property>
+		<property name="miscellaneouss">
+			<list>
+			</list>
+		</property>
+		<property name="EducationRecords">
+			<list>
+			</list>
+		</property>
+		<property name="Endorsers">
+			<list>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="curriculum3" class="domain.Curriculum">
+		<property name="ticker" value="2016-01-01-ef53"/>
+		<property name="name" value="nameCandidate1"/>
+		<property name="picture" value="https://www.picture.com"/>
+		<property name="email" value="candidate1@gmail.com"/>
+		<property name="phoneNumber" value="+ES678365234"/>
+		<property name="linkToLinkedIn" value="https://es.linkedin.com/"/>
+		<property name="copy" value="true"/>
+		<property name="candidate" ref="candidate1"/>
+		<property name="professionalRecords">
+			<list>
+				<ref bean="professionalRecord1"/>
+			</list>
+		</property>
+		<property name="miscellaneouss">
+			<list>
+				<ref bean="miscellaneous1"/>
+			</list>
+		</property>
+		<property name="EducationRecords">
+			<list>
+				<ref bean="educationRecord1"/>
+			</list>
+		</property>
+		<property name="Endorsers">
+			<list>
+				<ref bean="endorser1"/>
+			</list>
+		</property>
+	</bean>
+	
+		<bean id="curriculum4" class="domain.Curriculum">
+		<property name="ticker" value="2017-01-05-ef53"/>
+		<property name="name" value="nameCandidate3"/>
+		<property name="picture" value="https://www.picture.com"/>
+		<property name="email" value="candidate3@gmail.com"/>
+		<property name="phoneNumber" value="+ES678363234"/>
+		<property name="linkToLinkedIn" value="https://es.linkedin.com/"/>
+		<property name="copy" value="true"/>
+		<property name="candidate" ref="candidate3"/>
+		<property name="professionalRecords">
+			<list>
+			</list>
+		</property>
+		<property name="miscellaneouss">
+			<list>
+			</list>
+		</property>
+		<property name="EducationRecords">
+			<list>
+			</list>
+		</property>
+		<property name="Endorsers">
+			<list>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- PROFESSIONAL RECORDS -->
+	
+	<bean id="professionalRecord1" class="domain.ProfessionalRecord">
+		<property name="companyName" value="companyName1"/>
+		<property name="role" value="El nuevo boss de fanta"/>
+		<property name="attachment" value="https://www.company.com"/>
+		<property name="comments" value="Hola soy el nuevo boss de fanta"/>
+		<property name="period" ref="period1"/>
+		<property name="curriculum" ref="curriculum1"/>
+	</bean>
+	
+	<!-- MISCELLANEOUS -->
+	
+	<bean id="miscellaneous1" class="domain.Miscellaneous">
+		<property name="title" value="title1"/>
+		<property name="attachment" value="https://www.company.com"/>
+		<property name="comments" value="Esto es un comentario"/>
+		<property name="curriculum" ref="curriculum1"/>
+	</bean>
+	
+	<!-- EDUCATION RECORDS -->
+	
+	<bean id="educationRecord1" class="domain.EducationRecord">
+		<property name="diplomaTitle" value="Diplomado en el arte del aprobado"/>
+		<property name="attachment" value="https://www.picture.com"/>
+		<property name="comments" value="Comentario"/>
+		<property name="period" ref="period2"/>
+		<property name="curriculum" ref="curriculum1"/>
+	</bean>
+	
+	
+	<!-- ENDORSERS -->
+	
+	<bean id="endorser1" class="domain.Endorser">
+		<property name="name" value="endorserName1"/>
+		<property name="email" value="endorser1@gmail.com"/>
+		<property name="phoneNumber" value="+ES654323456"/>
+		<property name="linkToLinkedIn" value="https://es.linkedin.com/"/>
+		<property name="comments" value=""/>
+		<property name="curriculum" ref="curriculum1"/>
+	</bean>
+	
+
+	<!-- SALARIES -->
+
+	<bean id="salary1" class="domain.Salary" >
+		<property name="minSalary" value="650"  />
+		<property name="maxSalary" value="750" />
+		<property name="currency" value="currency1" />
+	</bean>
+	
+	<bean id="salary2" class="domain.Salary" >
+		<property name="minSalary" value="650"  />
+		<property name="maxSalary" value="750" />
+		<property name="currency" value="currency1" />
+	</bean>
+	
+	<bean id="salary3" class="domain.Salary" >
+		<property name="minSalary" value="650"  />
+		<property name="maxSalary" value="750" />
+		<property name="currency" value="currency2" />
+	</bean>
+	
+	<!-- APPLICATIONS -->
+
+	<bean id="application1" class="domain.Application" >
+		<property name="createMoment" value="01/03/2015 12:00"  />
+		<property name="status" value="REJECTED" />
+		
+		<property name="candidate" ref="candidate1" />
+		<property name="curriculum" ref="curriculum3"/>
+		<property name="offer" ref="offer1" />
+	</bean>
+	
+	<bean id="application2" class="domain.Application" >
+		<property name="createMoment" value="01/04/2015 12:00"  />
+		<property name="status" value="PENDING" />
+		
+		<property name="candidate" ref="candidate3" />
+		<property name="curriculum" ref="curriculum4"/>
+		<property name="offer" ref="offer2" />
+	</bean>
+
+	<!-- PERIODS -->
+
+	<bean id="period1" class="domain.Period" >
+		<property name="startPeriod" value="01/03/2016 12:00"  />
+		<property name="endPeriod" value="08/08/2017 12:00" />
+	</bean>	
+	
+	<bean id="period2" class="domain.Period" >
+		<property name="startPeriod" value="11/04/2016 12:00"  />
+		<property name="endPeriod" value="02/08/2017 2:00" />
+	</bean>	
+	
+</beans>
+

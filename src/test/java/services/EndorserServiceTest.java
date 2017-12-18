@@ -1,0 +1,146 @@
+
+package services;
+
+import javax.transaction.Transactional;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import utilities.AbstractTest;
+import domain.Endorser;
+
+@Transactional
+@ContextConfiguration(locations = {
+	"classpath:spring/junit.xml"
+})
+@RunWith(SpringJUnit4ClassRunner.class)
+public class EndorserServiceTest extends AbstractTest {
+
+	// The SUT
+	// ====================================================
+
+	@Autowired
+	private EndorserService	endorserService;
+
+
+	// Tests
+	// ====================================================
+
+	/*
+	 * To check the validity of an endorser, the system must check every field of the edit form.
+	 * 
+	 * En este test, se comprueba si la validez de los endorser, así el sistema debe validar que los campos introducidos son correctos
+	 */
+
+	/*
+	 * Browse the list of endorser of a curriculum.
+	 * 
+	 * En este caso de uso se comprobamos que cualquiera puede listar los endorser de un curriculum.
+	 */
+
+	public void listOfEndorsersTest(final String username, final Class<?> expected) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(username);
+
+			this.endorserService.findAll();
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+
+			caught = oops.getClass();
+
+		}
+
+		this.checkExceptions(expected, caught);
+	}
+
+	/*
+	 * Edit an endorser or create a new one.
+	 * 
+	 * En este caso de uso un candidato puede crear/editar un nuevo endorser siempre y cuando el curriculum le pertenezca.
+	 */
+
+	public void editEndorserTest(final String username, final int endorserId, final Class<?> expected) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(username);
+
+			final Endorser endorser = this.endorserService.findOne(endorserId);
+
+			this.endorserService.save(endorser);
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+
+			caught = oops.getClass();
+
+		}
+
+		this.checkExceptions(expected, caught);
+	}
+
+	//Drivers
+	// ===================================================
+
+	@Test
+	public void driverListOfEndorsersTest() {
+
+		final Object testingData[][] = {
+			// Alguien sin registrar/loguado -> true
+			{
+				null, null
+			},
+			// Un candidate -> true
+			{
+				"candidate1", null
+			},
+			// Una company -> true
+			{
+				"company1", null
+			},
+			// Un administrador -> true
+			{
+				"admin", null
+			}
+
+		};
+		for (int i = 0; i < testingData.length; i++)
+			this.listOfEndorsersTest((String) testingData[i][0], (Class<?>) testingData[i][1]);
+	}
+
+	@Test
+	public void driverEditEndorserTest() {
+
+		final int endorserId = 31;
+
+		final Object testingData[][] = {
+			// Alguien sin registrar/logueado -> false
+			{
+				null, endorserId, IllegalArgumentException.class
+			},
+			// Edición por parte del propietario del curriculum -> true
+			{
+				"candidate1", endorserId, null
+			},
+			// Edición por alguien que no es el propietario -> false
+			{
+				"candidate2", endorserId, IllegalArgumentException.class
+			},
+			// Edición por alguien que no es candidato -> false
+			{
+				"company1", endorserId, IllegalArgumentException.class
+			}
+
+		};
+		for (int i = 0; i < testingData.length; i++)
+			this.editEndorserTest((String) testingData[i][0], (int) testingData[i][1], (Class<?>) testingData[i][2]);
+	}
+
+}

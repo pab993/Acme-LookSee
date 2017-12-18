@@ -1,0 +1,67 @@
+
+package services;
+
+import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.MiscellaneousRepository;
+import domain.Miscellaneous;
+
+@Service
+@Transactional
+public class EducationRecordService {
+
+	// Managed Repository
+	// =============================================================================
+
+	@Autowired
+	private MiscellaneousRepository	educationRecordRepository;
+
+
+	// Constructor methods
+	// ============================================================================
+
+	// Simple CRUD methods
+	// ============================================================================
+
+	public Miscellaneous findOne(final int educationRecordId) {
+		Miscellaneous result;
+
+		result = this.educationRecordRepository.findOne(educationRecordId);
+
+		return result;
+	}
+
+	public Collection<Miscellaneous> findAll() {
+		Collection<Miscellaneous> result;
+
+		result = this.educationRecordRepository.findAll();
+
+		return result;
+	}
+
+	public Miscellaneous save(final Miscellaneous educationRecord) {
+		Assert.notNull(educationRecord);
+		Miscellaneous result;
+
+		result = this.educationRecordRepository.save(educationRecord);
+
+		return result;
+	}
+
+	// Other Business Methods
+	// =========================================================================
+
+	public Collection<Miscellaneous> findAllByCurriculumId(final int curriculumId) {
+		Collection<Miscellaneous> result;
+
+		result = this.educationRecordRepository.findAllByCurriculumId(curriculumId);
+
+		return result;
+	}
+
+}

@@ -1,0 +1,89 @@
+
+package repositories;
+
+import java.util.Collection;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import domain.Application;
+
+@Repository
+public interface ApplicationRepository extends JpaRepository<Application, Integer> {
+
+	@Query("select a from Application a where a.candidate.id = ?1")
+	Collection<Application> findAllByCandidateId(int candidateId);
+
+	@Query("select a from Application a where a.offer.id = ?1")
+	Collection<Application> findAllByOfferId(int offerId);
+
+	//	@Query("select min(c.applications.size), avg(c.applications.size), max(c.applications.size) from Candidate c")
+	//	Collection<Object[]> maxAvgMinNumberOfApplicationsPerCandidate();
+
+	//	@Query("select min(o.applications.size), avg(o.applications.size), max(o.applications.size) from Offer o")
+	//	Collection<Object[]> maxAvgMinNumberOfApplicationsPerOffer();
+
+	@Query("select min(c.applications.size) from Candidate c")
+	Integer minNumberOfApplicationsPerCandidate();
+
+	@Query("select max(c.applications.size) from Candidate c")
+	Integer maxNumberOfApplicationsPerCandidate();
+
+	@Query("select avg(c.applications.size) from Candidate c")
+	Double avgNumberOfApplicationsPerCandidate();
+
+	@Query("select min(o.applications.size) from Offer o")
+	Integer minNumberOfApplicationsPerOffer();
+
+	@Query("select max(o.applications.size) from Offer o")
+	Integer maxNumberOfApplicationsPerOffer();
+
+	@Query("select avg(o.applications.size) from Offer o")
+	Double avgNumberOfApplicationsPerOffer();
+
+	//Min, Max and Avg applications pending per company
+
+	@Query("select count(a1.offer) from Application a1 where a1.status = 'PENDING' group by a1.offer.company having count(a1.offer) <= ALL(select count(a.offer) from Application a where a.status = 'PENDING' group by a.offer.company)")
+	Integer minNumberOfPendingApplicationsPerCompany();
+
+	@Query("select count(a1.offer) from Application a1 where a1.status = 'PENDING' group by a1.offer.company having count(a1.offer) >= ALL(select count(a.offer) from Application a where a.status = 'PENDING' group by a.offer.company)")
+	Integer maxNumberOfPendingApplicationsPerCompany();
+
+	@Query("select (select 1.0*count(a) from Application a where a.status = 'PENDING' group by a.offer.company)/count(c1) from Company c1")
+	Double avgNumberOfPendingApplicationsPerCompany();
+
+	//Min, Max and Avg applications accepted per company
+
+	@Query("select count(a1.offer) from Application a1 where a1.status = 'ACCEPTED' group by a1.offer.company having count(a1.offer) <= ALL(select count(a.offer) from Application a where a.status = 'ACCEPTED' group by a.offer.company)")
+	Integer minNumberOfAcceptedApplicationsPerCompany();
+
+	@Query("select count(a1.offer) from Application a1 where a1.status = 'ACCEPTED' group by a1.offer.company having count(a1.offer) >= ALL(select count(a.offer) from Application a where a.status = 'ACCEPTED' group by a.offer.company)")
+	Integer maxNumberOfAcceptedApplicationsPerCompany();
+
+	@Query("select (select 1.0*count(a) from Application a where a.status = 'ACCEPTED' group by a.offer.company)/count(c1) from Company c1")
+	Double avgNumberOfAcceptedApplicationsPerCompany();
+
+	//Min, Max and Avg applications rejected per company
+
+	@Query("select count(a1.offer) from Application a1 where a1.status = 'REJECTED' group by a1.offer.company having count(a1.offer) <= ALL(select count(a.offer) from Application a where a.status = 'REJECTED' group by a.offer.company)")
+	Integer minNumberOfRejectedApplicationsPerCompany();
+
+	@Query("select count(a1.offer) from Application a1 where a1.status = 'REJECTED' group by a1.offer.company having count(a1.offer) >= ALL(select count(a.offer) from Application a where a.status = 'REJECTED' group by a.offer.company)")
+	Integer maxNumberOfRejectedApplicationsPerCompany();
+
+	@Query("select (select 1.0*count(a) from Application a where a.status = 'REJECTED' group by a.offer.company)/count(c1) from Company c1")
+	Double avgNumberOfRejectedApplicationsPerCompany();
+
+	@Query("select a from Application a where a.candidate.id = ?1 order by a.createMoment ASC ")
+	Collection<Application> findAllByCandidateIdOrderByCreateMomentAsc(int candidateId);
+
+	@Query("select a from Application a where a.candidate.id = ?1 order by a.createMoment DESC")
+	Collection<Application> findAllByCandidateIdOrderByCreateMomentDesc(int candidateId);
+
+	@Query("select a from Application a where a.candidate.id = ?1 order by a.status")
+	Collection<Application> findAllByCandidateIdOrderByStatus(int candidateId);
+
+	@Query("select a from Application a join a.offer o where a.candidate.id = ?1 order by o.deadline")
+	Collection<Application> findAllByCandidateIdOrderByDeadline(int candidateId);
+}

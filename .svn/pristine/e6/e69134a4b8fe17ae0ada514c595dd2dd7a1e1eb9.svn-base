@@ -1,0 +1,67 @@
+
+package services;
+
+import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.EducationRecordRepository;
+import domain.EducationRecord;
+
+@Service
+@Transactional
+public class EducationRecordService {
+
+	// Managed Repository
+	// =============================================================================
+
+	@Autowired
+	private EducationRecordRepository	educationRecordRepository;
+
+
+	// Constructor methods
+	// ============================================================================
+
+	// Simple CRUD methods
+	// ============================================================================
+
+	public EducationRecord findOne(final int educationRecordId) {
+		EducationRecord result;
+
+		result = this.educationRecordRepository.findOne(educationRecordId);
+
+		return result;
+	}
+
+	public Collection<EducationRecord> findAll() {
+		Collection<EducationRecord> result;
+
+		result = this.educationRecordRepository.findAll();
+
+		return result;
+	}
+
+	public EducationRecord save(final EducationRecord educationRecord) {
+		Assert.notNull(educationRecord);
+		EducationRecord result;
+
+		result = this.educationRecordRepository.save(educationRecord);
+
+		return result;
+	}
+
+	// Other Business Methods
+	// =========================================================================
+
+	public Collection<EducationRecord> findAllByCurriculumId(final int curriculumId) {
+		Collection<EducationRecord> result;
+
+		result = this.educationRecordRepository.findAllByCurriculumId(curriculumId);
+
+		return result;
+	}
+
+}

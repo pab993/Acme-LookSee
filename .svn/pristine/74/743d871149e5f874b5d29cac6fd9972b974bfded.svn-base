@@ -1,0 +1,34 @@
+
+package repositories;
+
+import java.util.Collection;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import domain.Curriculum;
+
+@Repository
+public interface CurriculumRepository extends JpaRepository<Curriculum, Integer> {
+
+	@Query("select c from Curriculum c where c.candidate.id = ?1 and c.copy=false")
+	Collection<Curriculum> findAllByCandidateId(int candidateId);
+
+	@Query("select c from Curriculum c where c.copy=false")
+	Collection<Curriculum> findAllNotCopy();
+
+	@Query("select c from Curriculum c where c.id = ?1")
+	Curriculum findOne(int curriculumId);
+
+	//	@Query("select c from Curriculum c where c.diplomaTitle like %?1% or c.attachment like %?1% or c.comments like %?1% or c.period.startPeriod like %?1% or c.period.endPeriod like %?1%")
+	//	Collection<Curriculum> searchCurriculumByWords(String keyWord);
+
+	@Query("select (select 1.0*count(cu) from Candidate c join c.curriculums cu where cu.copy = false)/count(c1) from Candidate c1")
+	Double avgNumberCurriculumPerCandidate();
+
+	@Query("select c from Curriculum c join c.endorsers ce join c.educationRecords ceR join c.miscellaneouss cm join c.professionalRecords cp where (ce.name like %?1% or ce.email like %?1% or ce.phoneNumber like %?1% or ce.linkToLinkedIn like %?1% or ce.comments like %?1% or ceR.diplomaTitle like %?1% or ceR.attachment like %?1% or ceR.comments like %?1% or cm.title like %?1% or cm.attachment like %?1% or cm.comments like %?1% or cp.companyName like %?1% or cp.role like %?1% or cp.attachment like %?1% or cp.comments like %?1% or c.name like %?1% or c.picture like %?1% or c.email like %?1% or c.phoneNumber like %?1% or c.linkToLinkedIn like %?1%) and c.copy=false")
+	Collection<Curriculum> searchCurriculumByWords(String keyWord);
+}
+
+// select c from Curriculum c join c.endorsers ce join c.educationRecords ceR where ce.name like %?1% or ce.email like %?1% or ce.phoneNumber like %?1% or ce.linkToLinkedIn like %?1% or ce.comments like %?1% or ceR.diplomaTitle like %?1% or ceR.attachment like %?1% or ceR.comments like %?1% or ceR.period like %?1%

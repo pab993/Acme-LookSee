@@ -1,0 +1,30 @@
+
+package repositories;
+
+import java.util.Collection;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import domain.Offer;
+
+@Repository
+public interface OfferRepository extends JpaRepository<Offer, Integer> {
+
+	@Query("select o from Offer o where o.company.id = ?1 and o.company.isBan=false and o.draft=false")
+	Collection<Offer> findAllByCompanyId(int companyId);
+
+	@Query("select o from Offer o where o.company.id = ?1")
+	Collection<Offer> findAllMyOffersByCompanyId(int companyId);
+
+	@Query("select o from Offer o where o.company.isBan = false and o.draft = false and CURRENT_TIMESTAMP < o.deadline and (o.title like %?1% or o.description like %?1% or o.salary.minSalary like %?1% or o.salary.maxSalary like %?1%) and o.salary.currency like %?2%")
+	Collection<Offer> searchOfferByWords(String keyWord, String currency);
+
+	@Query("select (select 1.0*count(o) from Company c join c.offers o where o.draft = false)/count(c1) from Company c1")
+	Double avgNumberOffersPerCompany();
+
+	@Query("select o from Offer o where o.draft=false and o.company.isBan=false")
+	Collection<Offer> findAllNotDraft();
+
+}

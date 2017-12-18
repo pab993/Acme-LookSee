@@ -1,0 +1,23 @@
+
+package repositories;
+
+import java.util.Collection;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import domain.Curriculum;
+
+@Repository
+public interface CurriculumRepository extends JpaRepository<Curriculum, Integer> {
+
+	@Query("select c from Curriculum c where c.candidate.id = ?1")
+	Collection<Curriculum> findAllByCandidateId(int candidateId);
+	
+	@Query("select c from Curriculum c where c.id = ?1")
+	Curriculum findOne(int curriculumId);
+
+//	@Query("select c from Curriculum c where c.diplomaTitle like %?1% or c.attachment like %?1% or c.comments like %?1% or c.period.startPeriod like %?1% or c.period.endPeriod like %?1%")
+//	Collection<Curriculum> searchCurriculumByWords(String keyWord);
+}

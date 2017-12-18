@@ -1,0 +1,170 @@
+
+package services;
+
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.transaction.Transactional;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import utilities.AbstractTest;
+import domain.Company;
+import domain.Offer;
+import domain.Salary;
+
+@Transactional
+@ContextConfiguration(locations = {
+	"classpath:spring/junit.xml"
+})
+@RunWith(SpringJUnit4ClassRunner.class)
+public class OfferServiceTest extends AbstractTest {
+
+	// The SUT
+	// ====================================================
+
+	@Autowired
+	private OfferService	offerService;
+
+	@Autowired
+	private CompanyService	companyService;
+
+
+	// Tests
+	// ====================================================
+
+	/*
+	 * To check the validity of a offer, the system must check its creation moment is in the past, its deadline must be at least one week ahead the moment when an offer is published,
+	 * and the maximum salary must be greater or equal to the minimum salary.
+	 * 
+	 * En este test, se comprueba si el momento de creación de la oferta está en pasado, su fecha límite está a una semana en el futuro de la fecha de creación y se comprueba que el salario máximo es mayor o igual que el salario mínimo
+	 * Para ello introducimos valores correctos e incorrectos para observa el comportamiento de la aplicación.
+	 */
+
+	/*
+	 * Browse the list of offers who have registered to the system.
+	 * 
+	 * En este caso de uso se comprobamos que cualquiera puede listar las ofertas que existen en nuestra aplicación.
+	 */
+
+	public void listOfOffersTest(final String username, final Class<?> expected) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(username);
+
+			this.offerService.findAll();
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+
+			caught = oops.getClass();
+
+		}
+
+		this.checkExceptions(expected, caught);
+	}
+
+	/*
+	 * Edit an offer or create a new one.
+	 * 
+	 * En este caso de uso una compañía puede crear una nueva oferta y puede editarla siempre y cuando sea un borrador.
+	 */
+
+	public void editOfferTest(final String username, Date creationMoment, String title, String description, Date deadline, Boolean draft, Double minSalary, Double maxSalary, String currency, final Class<?> expected) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(username);
+
+			Offer result;
+
+			result = offerService.create();
+
+			Salary salary = new Salary();
+
+			Company company = companyService.findByPrincipal();
+
+			result.setCreateMoment(creationMoment);
+			result.setCompany(company);
+			result.setDeadline(deadline);
+			result.setDescription(description);
+			result.setDraft(draft);
+			result.setTitle(title);
+			salary.setCurrency(currency);
+			salary.setMaxSalary(maxSalary);
+			salary.setMinSalary(minSalary);
+			result.setSalary(salary);
+
+			offerService.save(result);
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+
+			caught = oops.getClass();
+
+		}
+
+		this.checkExceptions(expected, caught);
+	}
+	//Drivers
+	// ===================================================
+
+	@Test
+	public void driverListOfferTest() {
+
+		final Object testingData[][] = {
+			// Alguien sin registrar/loguado -> true
+			{
+				null, null
+			},
+			// Un candidate -> true
+			{
+				"candidate1", null
+			},
+			// Una company -> true
+			{
+				"company1", null
+			},
+			// Un administrador -> true
+			{
+				"admin", null
+			}
+
+		};
+		for (int i = 0; i < testingData.length; i++)
+			this.listOfOffersTest((String) testingData[i][0], (Class<?>) testingData[i][1]);
+	}
+
+	@Test
+	public void driverEditOfferTest() {
+
+		long l = 100;
+		Date pastDate = new Date(System.currentTimeMillis() - l);
+
+		Date actual = new Date(System.currentTimeMillis() - l);
+		Calendar futureDate = Calendar.getInstance();
+		futureDate.setTime(actual);
+		futureDate.add(Calendar.DAY_OF_YEAR, 8);
+
+		final Object testingData[][] = {
+			// Alguien sin registrar/loguado -> false
+			{
+				null, pastDate, "testTitle", "testDescription", futureDate.getTime(), true, 7.0, 10.0, "Euros", IllegalArgumentException.class
+			},
+			// Todo correcto -> true
+			{
+				"company1", pastDate, "testTitle", "testDescription", futureDate.getTime(), true, 7.0, 10.0, "Euros", null
+			}
+
+		};
+		for (int i = 0; i < testingData.length; i++)
+			this.editOfferTest((String) testingData[i][0], (Date) testingData[i][1], (String) testingData[i][2], (String) testingData[i][3], (Date) testingData[i][4], (Boolean) testingData[i][5], (Double) testingData[i][6], (Double) testingData[i][7],
+				(String) testingData[i][8], (Class<?>) testingData[i][9]);
+	}
+}

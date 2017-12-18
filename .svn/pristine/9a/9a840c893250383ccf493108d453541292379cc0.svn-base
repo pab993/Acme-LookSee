@@ -1,0 +1,67 @@
+
+package services;
+
+import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.MiscellaneousRepository;
+import domain.Miscellaneous;
+
+@Service
+@Transactional
+public class ProfessionalRecordService {
+
+	// Managed Repository
+	// =============================================================================
+
+	@Autowired
+	private MiscellaneousRepository	professionalRecordRepository;
+
+
+	// Constructor methods
+	// ============================================================================
+
+	// Simple CRUD methods
+	// ============================================================================
+
+	public Miscellaneous findOne(final int professionalRecordId) {
+		Miscellaneous result;
+
+		result = this.professionalRecordRepository.findOne(professionalRecordId);
+
+		return result;
+	}
+
+	public Collection<Miscellaneous> findAll() {
+		Collection<Miscellaneous> result;
+
+		result = this.professionalRecordRepository.findAll();
+
+		return result;
+	}
+
+	public Miscellaneous save(final Miscellaneous professionalRecord) {
+		Assert.notNull(professionalRecord);
+		Miscellaneous result;
+
+		result = this.professionalRecordRepository.save(professionalRecord);
+
+		return result;
+	}
+
+	// Other Business Methods
+	// =========================================================================
+
+	public Collection<Miscellaneous> findAllByCurriculumId(final int curriculumId) {
+		Collection<Miscellaneous> result;
+
+		result = this.professionalRecordRepository.findAllByCurriculumId(curriculumId);
+
+		return result;
+	}
+
+}

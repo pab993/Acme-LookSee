@@ -1,0 +1,39 @@
+# messages.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+offer.createMoment		= Create moment
+offer.title				= Title
+offer.description		= Description
+offer.deadline			= Dead Line
+offer.draft				= Do you wish to save this offer as draft?
+draft.yes				= Yes
+draft.no				= No
+offer.minSalary			= Minimum salary 
+offer.maxSalary			= Maximum salary
+
+offer.listByOffer		= List of companies
+
+offer.searchText		= Search of companies	
+offer.search			= Search
+
+offer.salary.min		= Minimum salary
+offer.salary.max		= Maximun salary
+offer.salary.currency	= Currency
+
+offer.submit			= Save Offer
+offer.cancel			= Back to my offers
+
+offer.deadline.error	= The dead line must be at least one week from the current date
+
+offer.company.profile	= See company profile
+offer.save.error		= Cannot commit this operation
+
+offer.currency			= Currency
+offer.edit				= Edit
+
+offer.deadline.pattern	= dd/MM/yyyy HH:mm

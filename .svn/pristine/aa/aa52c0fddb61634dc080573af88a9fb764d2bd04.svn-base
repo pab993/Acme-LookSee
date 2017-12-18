@@ -1,0 +1,47 @@
+# messages.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+
+curriculum.personalData						= Personal Data
+curriculum.endorser							= Endorser
+curriculum.miscellaneous					= Miscellaneous
+curriculum.educationRecord					= Education Record
+curriculum.professionalRecord 				= Professional Record
+curriculum.search							= Search
+
+curriculum.name								= Name
+curriculum.picture							= Picture 
+curriculum.email							= Email
+curriculum.phoneNumber						= Phone number
+curriculum.linkToLinkedIn					= Link to LinkedIn
+curriculum.display							= Display CV
+
+endorser.name								= Name
+endorser.email								= Email
+endorser.phoneNumber						= Phone number
+endorser.linkToLinkedIn						= Link to LinkedIn
+endorser.comments							= Comments
+
+educationRecord.diplomaTitle				= Diploma Title
+educationRecord.attachment					= Attachment
+educationRecord.comments					= Comments
+educationRecord.period						= Period
+
+miscellany.title							= Title
+miscellany.attachment						= Attachment
+miscellany.comments							= Comments
+
+professionalRecord.companyName				= Company Name
+professionalRecord.period					= Period
+professionalRecord.role						= Role
+professionalRecord.attachment				= Attachment
+professionalRecord.comments					= Comments
+
+
+
+

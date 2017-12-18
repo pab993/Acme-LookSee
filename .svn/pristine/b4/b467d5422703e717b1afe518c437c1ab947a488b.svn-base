@@ -1,0 +1,88 @@
+package services;
+
+import javax.transaction.Transactional;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import utilities.AbstractTest;
+import domain.Curriculum;
+
+@Transactional
+@ContextConfiguration(locations = { "classpath:spring/junit.xml" })
+@RunWith(SpringJUnit4ClassRunner.class)
+public class CurriculumServiceTest extends AbstractTest {
+
+	// The SUT
+	// ====================================================
+
+	@Autowired
+	private CurriculumService curriculumService;
+
+	// Tests
+	// ====================================================
+
+	/*
+	 * To check the validity of an curriculum, the system must check every
+	 * field of the edit form.
+	 * 
+	 * En este test, se comprueba si la validez de los curriculum, así el
+	 * sistema debe validar que los campos introducidos son correctos
+	 */
+
+	/*
+	 * Edit a curriculum or create a new one.
+	 * 
+	 * En este caso de uso un candidato puede crear/editar un nuevo
+	 * curriculum siempre y cuando el curriculum le pertenezca.
+	 */
+
+	public void editCurriculumTest(final String username,
+			int curriculumId, final Class<?> expected) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(username);
+
+			Curriculum curriculum = curriculumService
+					.findOne(curriculumId);
+
+			curriculumService.save(curriculum);
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+
+			caught = oops.getClass();
+
+		}
+
+		this.checkExceptions(expected, caught);
+	}
+
+	// Drivers
+	// ===================================================
+
+	@Test
+	public void driverEditCurriculumTest() {
+
+		final Object testingData[][] = {
+				// Alguien sin registrar/logueado -> false
+				{ null, 18, IllegalArgumentException.class },
+				// Edición por parte del propietario del curriculum -> true
+				{ "candidate1", 18, null },
+				// Edición por alguien que no es el propietario -> false
+				{ "candidate2", 18, IllegalArgumentException.class },
+				// Edición por alguien que no es candidato -> false
+				{ "company1", 18, IllegalArgumentException.class }
+
+		};
+		for (int i = 0; i < testingData.length; i++)
+			this.editCurriculumTest((String) testingData[i][0],
+					(int) testingData[i][1], (Class<?>) testingData[i][2]);
+	}
+
+}

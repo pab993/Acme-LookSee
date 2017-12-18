@@ -1,0 +1,89 @@
+
+package controllers;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import services.MiscellanyService;
+import domain.Miscellaneous;
+
+@Controller
+@RequestMapping("/miscellaneous")
+public class MiscellanyController extends AbstractController {
+
+	// Services
+	// ============================================================================
+
+	@Autowired
+	private MiscellanyService	miscellaneousService;
+
+
+	// Constructors
+	// ============================================================================
+
+	public MiscellanyController() {
+		super();
+	}
+
+	// Edition
+	// =============================================================================
+
+	@RequestMapping(value = "/edit", method = RequestMethod.GET)
+	public ModelAndView edit(@RequestParam final int miscellanyId) {
+		ModelAndView result;
+		final Miscellaneous miscellaneous = this.miscellaneousService.findOne(miscellanyId);
+
+		result = this.createEditModelAndView(miscellaneous);
+		return result;
+
+	}
+
+	// Save
+	// =============================================================================
+
+	@RequestMapping(value = "/edit", method = RequestMethod.POST, params = "save")
+	public ModelAndView save(@Valid final Miscellaneous miscellaneous, final BindingResult binding) {
+		ModelAndView result;
+
+		try {
+
+			if (binding.hasErrors())
+				result = this.createEditModelAndView(miscellaneous, "miscellaneous.save.error");
+			else {
+				result = new ModelAndView("redirect:/curriculum/list.do");
+
+				this.miscellaneousService.save(miscellaneous);
+
+			}
+		} catch (final Throwable oops) {
+			result = this.createEditModelAndView(miscellaneous, "miscellaneous.save.error");
+		}
+
+		return result;
+	}
+
+	// Ancilliary methods
+	// =================================================================================================
+
+	private ModelAndView createEditModelAndView(final Miscellaneous miscellaneous) {
+
+		return this.createEditModelAndView(miscellaneous, null);
+	}
+
+	private ModelAndView createEditModelAndView(final Miscellaneous miscellaneous, final String message) {
+
+		final ModelAndView resul = new ModelAndView("miscellaneous/edit");
+
+		resul.addObject("miscellaneous", miscellaneous);
+		resul.addObject("message", message);
+		return resul;
+	}
+
+}

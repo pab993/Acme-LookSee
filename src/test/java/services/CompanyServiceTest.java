@@ -1,0 +1,278 @@
+
+package services;
+
+import javax.transaction.Transactional;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
+
+import utilities.AbstractTest;
+import domain.Company;
+
+@Transactional
+@ContextConfiguration(locations = {
+	"classpath:spring/junit.xml"
+})
+@RunWith(SpringJUnit4ClassRunner.class)
+public class CompanyServiceTest extends AbstractTest {
+
+	// The SUT
+	// ====================================================
+
+	@Autowired
+	private CompanyService	companyService;
+
+
+	// Tests
+	// ====================================================
+
+	/*
+	 * Ban or unban a company if he or she thinks that their offers are inappropriate.
+	 * Ban-ning a company means that their offers are not displayed by the system, but the
+	 * ac-tor that represents it can login and perform any operation with the system.
+	 * 
+	 * En este caso de uso simularemos el baneo y desbaneo de una empresa
+	 */
+
+	public void BanCompanyTest(final String username, final Integer companyId, final Class<?> expected) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(username);
+
+			Company company;
+
+			company = this.companyService.findOne(companyId);
+			this.companyService.ban(companyId);
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+
+			caught = oops.getClass();
+
+		}
+
+		this.checkExceptions(expected, caught);
+	}
+
+	public void unBanCompanyTest(final String username, final Integer companyId, final Class<?> expected) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(username);
+
+			Company company;
+
+			company = this.companyService.findOne(companyId);
+			this.companyService.unBan(companyId);
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+
+			caught = oops.getClass();
+
+		}
+
+		this.checkExceptions(expected, caught);
+	}
+
+	/*
+	 * To check the validity of a new company in our system, the system must check the username,
+	 * the passwords, the name, the surname, the phone, the email, the postal address and the vat.
+	 * 
+	 * En este test, se comprueba el registro de una nueva compañía.
+	 * Para ello introducimos valores correctos e incorrectos para observa el comportamiento de la aplicación.
+	 */
+
+	/*
+	 * Register a new company.
+	 * 
+	 * En este caso de uso simularemos el registro de una compañía.
+	 */
+
+	public void companyRegisterTest(final String username, final String password, final String passwordRepeat, final String name, final String surname, final String phone, final String email, final String postalAddress, final String vat,
+		final Class<?> expected) {
+		Class<?> caught = null;
+
+		try {
+
+			final Company result = this.companyService.create();
+
+			Assert.notNull(username);
+			Assert.notNull(password);
+			Assert.notNull(passwordRepeat);
+			Assert.isTrue(password.equals(passwordRepeat));
+			Assert.notNull(phone);
+			Assert.isTrue(phone.matches("^[+][a-zA-Z]{2}([(][0-9]{1,3}[)])?[0-9]{4,25}$"));
+			Assert.isTrue(vat.matches("^[A-Z]{2}?[0-9]{0,12}$"));
+			Assert.notNull(email);
+			Assert.notNull(name);
+			Assert.notNull(surname);
+
+			result.getUserAccount().setUsername(username);
+			result.setName(name);
+			result.setSurname(surname);
+			result.setPhone(phone);
+			result.setEmail(email);
+			result.setPostalAddress(postalAddress);
+			result.setVat(vat);
+			result.getUserAccount().setPassword(new Md5PasswordEncoder().encodePassword(password, null));
+
+			this.companyService.save(result);
+
+		} catch (final Throwable oops) {
+
+			caught = oops.getClass();
+
+		}
+
+		this.checkExceptions(expected, caught);
+	}
+
+	/*
+	 * Browse the list of companies and navigate to their offers.
+	 * 
+	 * En este caso de uso se comprobamos que cualquiera puede listar las empresas que existen en nuestra aplicación.
+	 */
+
+	public void listOfCompaniesTest(final String username, final Class<?> expected) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(username);
+
+			this.companyService.findAll();
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+
+			caught = oops.getClass();
+
+		}
+
+		this.checkExceptions(expected, caught);
+	}
+
+	//Drivers
+	// ===================================================
+
+	@Test
+	public void driverBanCompanyTest() {
+
+		final Object testingData[][] = {
+			// Alguien sin registrar/loguado -> false
+			{
+				null, 12, IllegalArgumentException.class
+			},
+			// Un candidate -> false
+			{
+				"candidate1", 14, IllegalArgumentException.class
+			},
+			// Una company -> false
+			{
+				"company1", 14, IllegalArgumentException.class
+			},
+			// Un administrador -> true
+			{
+				"admin", 12, null
+			}
+
+		};
+		for (int i = 0; i < testingData.length; i++)
+			this.BanCompanyTest((String) testingData[i][0], (Integer) testingData[i][1], (Class<?>) testingData[i][2]);
+	}
+
+	@Test
+	public void driverUnBanCompanyTest() {
+
+		final Object testingData[][] = {
+			// Alguien sin registrar/loguado -> false
+			{
+				null, 13, IllegalArgumentException.class
+			},
+			// Un candidate -> false
+			{
+				"candidate1", 13, IllegalArgumentException.class
+			},
+			// Una company -> false
+			{
+				"company1", 13, IllegalArgumentException.class
+			},
+			// Un administrador -> true
+			{
+				"admin", 13, null
+			}
+
+		};
+		for (int i = 0; i < testingData.length; i++)
+			this.unBanCompanyTest((String) testingData[i][0], (Integer) testingData[i][1], (Class<?>) testingData[i][2]);
+	}
+
+	@Test
+	public void driverCompanyRegisterTest() {
+
+		final Object testingData[][] = {
+			// Alguien sin registrar/logueado -> true
+			{
+				"companyTest", "companyTest", "companyTest", "companyTestName", "companyTestSurname", "+ES1234456", "companyTest@companyTest.com", "12345", "ES2234567890", null
+			},
+			// Todo vacio --> false
+			{
+				null, null, null, null, null, null, null, null, null, IllegalArgumentException.class
+			},
+			// Las contraseñas no coinciden -> false
+			{
+				"companyTest", "companyTest", "12345", "companyTestName", "companyTestSurname", "+ES1234456", "companyTest@companyTest.com", "12345", "ES2234567890", IllegalArgumentException.class
+			},
+			// Todos los campos completados, excepto la direccion postal -> true
+			{
+				"companyTest", "companyTest", "companyTest", "companyTestName", "companyTestSurname", "+ES1234456", "companyTest@companyTest.com", "", "ES2234567890", null
+			},
+			// Patrón del telefono erroneo -> false
+			{
+				"companyTest", "companyTest", "companyTest", "companyTestName", "companyTestSurname", "678574635", "companyTest@companyTest.com", "12345", "ES2234567890", IllegalArgumentException.class
+			},
+			// Patrón del vat erroneo -> false
+			{
+				"companyTest", "companyTest", "companyTest", "companyTestName", "companyTestSurname", "+ES1234456", "companyTest@companyTest.com", "12345", "2234567890", IllegalArgumentException.class
+			}
+		};
+		for (int i = 0; i < testingData.length; i++)
+			this.companyRegisterTest((String) testingData[i][0], (String) testingData[i][1], (String) testingData[i][2], (String) testingData[i][3], (String) testingData[i][4], (String) testingData[i][5], (String) testingData[i][6],
+				(String) testingData[i][7], (String) testingData[i][8], (Class<?>) testingData[i][9]);
+	}
+
+	@Test
+	public void driverListCompanyTest() {
+
+		final Object testingData[][] = {
+			// Alguien sin registrar/logueado -> true
+			{
+				null, null
+			},
+			// Un candidate -> true
+			{
+				"candidate1", null
+			},
+			// Una company -> true
+			{
+				"company1", null
+			},
+			// Un administrador -> true
+			{
+				"admin", null
+			}
+
+		};
+		for (int i = 0; i < testingData.length; i++)
+			this.listOfCompaniesTest((String) testingData[i][0], (Class<?>) testingData[i][1]);
+	}
+}

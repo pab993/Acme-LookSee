@@ -1,0 +1,175 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+
+<%@taglib prefix="jstl" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@taglib prefix="security"
+	uri="http://www.springframework.org/security/tags"%>
+<%@taglib prefix="display" uri="http://displaytag.sf.net"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="acme" tagdir="/WEB-INF/tags"%>
+
+<fieldset>
+
+	<legend>
+		<b> <spring:message code="curriculum.personalData" /></b>
+	</legend>
+
+	<spring:message code="`curriculum.name" />
+	:
+	<jstl:out value="${curriculum.name}"></jstl:out>
+	<br>
+	<spring:message code="curriculum.picture" />
+	:
+	<jstl:out value="${curriculum.picture}"></jstl:out>
+	<br>
+	<spring:message code="curriculum.email" />
+	:
+	<jstl:out value="${curriculum.email}"></jstl:out>
+	<br>
+	<spring:message code="curriculum.phoneNumber" />
+	:
+	<jstl:out value="${curriculum.phoneNumber}"></jstl:out>
+	<br>
+	<spring:message code="curriculum.LinkToLinkedIn" />
+	:
+	<jstl:out value="${curriculum.LinkToLinkedIn}"></jstl:out>
+	<br>
+
+</fieldset>
+
+<display:table name="endorsers" id="row" requestURI="${requestURI}"
+	pagesize="5" class="displaytag">
+
+	<spring:message code="curriculum.name" var="nameHeader" />
+	<display:column property="name" title="${nameHeader}" />
+
+	<spring:message code="curriculum.picture" var="pictureHeader" />
+	<display:column property="picture" title="${pictureHeader}" />
+
+	<spring:message code="curriculum.email" var="emailHeader" />
+	<display:column property="email" title="${emailHeader}" />
+
+	<spring:message code="curriculum.phoneNumber" var="phoneNumberHeader" />
+	<display:column property="phoneNumber" title="${phoneNumberHeader}" />
+
+	<spring:message code="curriculum.linkToLinkedIn"
+		var="linkToLinkedInHeader" />
+	<display:column property="linkToLinkedIn"
+		title="${linkToLinkedInHeader}" />
+
+	<display:column>
+		<a href="curriculum/display.do?curriculumId=${row.id}"> <spring:message
+				code="curriculum.display"></spring:message></a>
+	</display:column>
+
+
+</display:table>
+
+<fieldset>
+
+	<legend>
+		<b> <spring:message code="curriculum.endorser" /></b>
+	</legend>
+
+	<spring:message code="endorser.name" />
+	:
+	<jstl:out value="${endorser.name}"></jstl:out>
+	<br>
+	<spring:message code="endorser.email" />
+	:
+	<jstl:out value="${endorser.email}"></jstl:out>
+	<br>
+	<spring:message code="endorser.phoneNumber" />
+	:
+	<jstl:out value="${endorser.phoneNumber}"></jstl:out>
+	<br>
+	<spring:message code="endorser.LinkToLinkedIn" />
+	:
+	<jstl:out value="${endorser.LinkToLinkedIn}"></jstl:out>
+	<br>
+	<spring:message code="endorser.comments" />
+	:
+	<jstl:out value="${endorser.comments}"></jstl:out>
+	<br>
+
+</fieldset>
+
+<fieldset>
+
+	<legend>
+		<b> <spring:message code="curriculum.miscellaneous" /></b>
+	</legend>
+
+	<spring:message code="miscellaneous.title" />
+	:
+	<jstl:out value="${miscellaneous.title}"></jstl:out>
+	<br>
+	<spring:message code="miscellaneous.attachment" />
+	:
+	<jstl:out value="${miscellaneous.attachment}"></jstl:out>
+	<br>
+	<spring:message code="miscellaneous.comments" />
+	:
+	<jstl:out value="${miscellaneous.comments}"></jstl:out>
+	<br>
+
+</fieldset>
+
+<fieldset>
+
+	<legend>
+		<b> <spring:message code="curriculum.educationRecord" /></b>
+	</legend>
+
+	<spring:message code="educationRecord.diplomaTitle" />
+	:
+	<jstl:out value="${educationRecord.diplomaTitle}"></jstl:out>
+	<br>
+	<spring:message code="educationRecord.attachment" />
+	:
+	<jstl:out value="${educationRecord.attachment}"></jstl:out>
+	<br>
+	<spring:message code="educationRecord.comments" />
+	:
+	<jstl:out value="${educationRecord.comments}"></jstl:out>
+	<br>
+	<spring:message code="educationRecord.period" />
+	:
+	<jstl:out value="${educationRecord.period}"></jstl:out>
+	<br>
+
+</fieldset>
+
+<fieldset>
+
+	<legend>
+		<b> <spring:message code="curriculum.professionalRecord" /></b>
+	</legend>
+
+	<spring:message code="professionalRecord.companyName" />
+	:
+	<jstl:out value="${professionalRecord.companyName}"></jstl:out>
+	<br>
+	<spring:message code="professionalRecord.role" />
+	:
+	<jstl:out value="${professionalRecord.role}"></jstl:out>
+	<br>
+	<spring:message code="professionalRecord.attachment" />
+	:
+	<jstl:out value="${professionalRecord.attachment}"></jstl:out>
+	<br>
+	<spring:message code="professionalRecord.comments" />
+	:
+	<jstl:out value="${professionalRecord.comments}"></jstl:out>
+	<br>
+	
+	<spring:message code="professionalRecord.period" />
+	:
+	<jstl:out value="${professionalRecord.period}"></jstl:out>
+	<br>
+
+</fieldset>

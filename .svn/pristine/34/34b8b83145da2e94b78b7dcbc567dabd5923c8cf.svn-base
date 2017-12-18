@@ -1,0 +1,200 @@
+
+package services;
+
+import java.util.Collection;
+import java.util.HashSet;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
+import repositories.CandidateRepository;
+import security.Authority;
+import security.LoginService;
+import security.UserAccount;
+import domain.Application;
+import domain.Candidate;
+import domain.Curriculum;
+import forms.CandidateForm;
+
+@Service
+@Transactional
+public class CandidateService {
+
+	//Managed Repository =============================================================================
+
+	@Autowired
+	private CandidateRepository	candidateRepository;
+
+
+	//Simple CRUD methods ============================================================================
+
+	public Candidate create() {
+		Candidate result;
+		UserAccount userAccount;
+		Authority authority;
+		Collection<Application> applications;
+		Collection<Curriculum> curricula;
+
+		authority = new Authority();
+		userAccount = new UserAccount();
+		applications = new HashSet<Application>();
+		curricula = new HashSet<Curriculum>();
+
+		authority.setAuthority("CANDIDATE");
+		userAccount.addAuthority(authority);
+
+		result = new Candidate();
+
+		result.setUserAccount(userAccount);
+		result.setApplications(applications);
+		result.setCurriculums(curricula);
+
+		return result;
+	}
+
+	public Candidate save(Candidate candidate) {
+		Assert.notNull(candidate);
+		Assert.notNull(candidate.getUserAccount());
+		Candidate result;
+
+		result = candidateRepository.save(candidate);
+
+		return result;
+	}
+
+	//Other Business Methods =========================================================================
+
+	public Candidate findByPrincipal() {
+		Candidate result;
+		UserAccount userAccount;
+
+		userAccount = LoginService.getPrincipal();
+		Assert.notNull(userAccount);
+
+		result = this.findByUserAccount(userAccount);
+		Assert.notNull(result);
+
+		return result;
+	}
+
+	public Candidate findByUserAccount(final UserAccount userAccount) {
+		Assert.notNull(userAccount);
+		Candidate result;
+
+		result = this.candidateRepository.findByUserAccountId(userAccount.getId());
+
+		return result;
+	}
+
+	public Candidate reconstruct(CandidateForm candidateForm, BindingResult binding) {
+
+		Candidate result;
+
+		result = create();
+		result.getUserAccount().setUsername(candidateForm.getUsername());
+		result.setName(candidateForm.getName());
+		result.setSurname(candidateForm.getSurname());
+		result.setPhone(candidateForm.getPhone());
+		result.setEmail(candidateForm.getEmail());
+		result.setPostalAddress(candidateForm.getPostalAddress());
+		result.getUserAccount().setPassword(new Md5PasswordEncoder().encodePassword(candidateForm.getPassword(), null));
+
+		//		comprobarPhone(candidateForm.getPhone(), binding);
+		comprobarContrasena(candidateForm.getPassword(), candidateForm.getRepeatPassword(), binding);
+		comprobarPostalAddress(candidateForm.getPostalAddress(), binding);
+
+		return result;
+	}
+
+	private boolean comprobarContrasena(String password, String passwordRepeat, BindingResult binding) {
+		FieldError error;
+		String[] codigos;
+		boolean result;
+
+		if (StringUtils.isNotBlank(password) && StringUtils.isNotBlank(passwordRepeat))
+			result = password.equals(passwordRepeat);
+		else
+			result = false;
+
+		if (!result) {
+			codigos = new String[1];
+			codigos[0] = "candidate.password.mismatch";
+			//			error = new FieldError("cadidateForm", "password", "candidate.paswword.mismatch");
+			error = new FieldError("candidateForm", "password", password, false, codigos, null, "");
+			binding.addError(error);
+		}
+
+		return result;
+	}
+
+	private boolean comprobarPostalAddress(String postalAddress, BindingResult binding) {
+		FieldError error;
+		String[] codigos;
+		boolean result;
+
+		if (postalAddress == null || postalAddress.isEmpty()) {
+			result = true;
+		} else {
+			result = false;
+		}
+
+		if (!result) {
+			if (postalAddress.matches("^[0-9]{5}$")) {
+				result = true;
+			} else {
+				codigos = new String[1];
+				codigos[0] = "candidate.postalAddress.error";
+				error = new FieldError("candidateForm", "postalAddress", postalAddress, false, codigos, null, "");
+				binding.addError(error);
+			}
+		}
+
+		return result;
+	}
+
+	private boolean comprobarPhone(String phone, BindingResult binding) {
+		FieldError error;
+		String[] codigos;
+		boolean result;
+
+		if (phone == null || phone.isEmpty()) {
+			result = true;
+		} else {
+			result = false;
+		}
+
+		if (!result) {
+			if (phone.matches("^[+][a-zA-Z]{2}([(][0-9]{1,3}[)])?[0-9]{4,25}$")) {
+				result = true;
+			} else {
+				codigos = new String[1];
+				codigos[0] = "candidate.phone.error";
+				error = new FieldError("candidateForm", "phone", phone, false, codigos, null, "");
+				binding.addError(error);
+			}
+		}
+
+		return result;
+	}
+
+	public Collection<Candidate> findCandidatesByNumberOfCurricula() {
+
+		Collection<Candidate> candidates = candidateRepository.findCandidatesByNumberOfCurricula();
+		return candidates;
+
+	}
+
+	public Collection<Candidate> findCandidatesWithMoreCurricula() {
+
+		Collection<Candidate> candidates = candidateRepository.findCandidatesWithMoreCurricula();
+		return candidates;
+
+	}
+
+}

@@ -1,0 +1,126 @@
+
+package controllers;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import services.CandidateService;
+import services.CurriculumService;
+import services.EndorserService;
+import domain.Candidate;
+import domain.Curriculum;
+import domain.Endorser;
+import forms.EndorserForm;
+
+@Controller
+@RequestMapping("/endorser")
+public class EndorserController extends AbstractController {
+
+	//Services
+	// ============================================================================
+
+	@Autowired
+	private EndorserService		endorserService;
+
+	@Autowired
+	private CurriculumService	curriculumService;
+
+	@Autowired
+	private CandidateService	candidateService;
+
+
+	//Constructors
+	// ============================================================================
+
+	public EndorserController() {
+		super();
+	}
+
+	//Edition
+	//=============================================================================
+
+	@RequestMapping(value = "/edit", method = RequestMethod.GET)
+	public ModelAndView edit(@RequestParam final int endorserId) {
+		ModelAndView result;
+		try {
+			Endorser endorser = endorserService.findOne(endorserId);
+
+			Candidate principal = candidateService.findByPrincipal();
+			Assert.isTrue(endorser.getCurriculum().getCandidate().getId() == principal.getId());
+
+			EndorserForm endorserForm = endorserService.reconstructToForm(endorser);
+
+			result = this.createEditModelAndView(endorserForm);
+		} catch (Throwable oops) {
+			result = new ModelAndView("redirect:/panic/misc.do");
+		}
+		return result;
+	}
+
+	//Creating
+	// ===========================================================================
+
+	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	public ModelAndView create(@RequestParam int curriculumId) {
+		ModelAndView result;
+		EndorserForm endorserForm = new EndorserForm();
+
+		Curriculum curriculum = curriculumService.findOne(curriculumId);
+
+		endorserForm.setCurriculum(curriculum);
+
+		result = this.createEditModelAndView(endorserForm);
+
+		return result;
+	}
+
+	//Save
+	// =============================================================================
+
+	@RequestMapping(value = "/edit", method = RequestMethod.POST, params = "save")
+	public ModelAndView save(@Valid final EndorserForm endorserForm, BindingResult binding) {
+		ModelAndView result;
+		Endorser endorser;
+
+		try {
+			endorser = endorserService.reconstructEndorser(endorserForm, binding);
+			if (binding.hasErrors())
+				result = this.createEditModelAndView(endorserForm, "endorser.save.error");
+			else {
+				result = new ModelAndView("redirect:/curriculum/display.do?curriculumId=" + endorser.getCurriculum().getId());
+				endorser = endorserService.save(endorser);
+
+			}
+		} catch (final Throwable oops) {
+			result = this.createEditModelAndView(endorserForm, "endorser.save.error");
+		}
+
+		return result;
+	}
+
+	// Ancilliary methods
+	// =============================================================================
+
+	private ModelAndView createEditModelAndView(EndorserForm endorserForm) {
+
+		return this.createEditModelAndView(endorserForm, null);
+	}
+
+	private ModelAndView createEditModelAndView(EndorserForm endorserForm, final String message) {
+
+		final ModelAndView result = new ModelAndView("endorser/edit");
+
+		result.addObject("endorserForm", endorserForm);
+		result.addObject("message", message);
+		return result;
+	}
+
+}

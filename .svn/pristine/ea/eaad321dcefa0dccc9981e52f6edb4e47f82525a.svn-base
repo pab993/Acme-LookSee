@@ -1,0 +1,72 @@
+<%--
+ * header.jsp
+ *
+ * Copyright (C) 2017 Universidad de Sevilla
+ * 
+ * The use of this project is hereby constrained to the conditions of the 
+ * TDG Licence, a copy of which you may download from 
+ * http://www.tdg-seville.info/License.html
+ --%>
+
+<%@page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@taglib prefix="security" uri="http://www.springframework.org/security/tags"%>
+
+<div>
+	<img src="images/logo.png" alt="Acme-LookSee Co., Inc." />
+</div>
+
+<div>
+	<ul id="jMenu">
+		<!-- Do not forget the "fNiv" class for the first level links !! -->
+		
+		<li><a class="fNiv" href="company/list.do"><spring:message code="master.page.company" /></a></li>
+		<li><a class="fNiv" href="offer/list.do"><spring:message code="master.page.offer" /></a></li>
+		<li><a class="fNiv" href="offer/searchForm.do"><spring:message code="master.page.searchOffer" /></a></li>
+		
+		<security:authorize access="hasRole('ADMIN')">
+			<li><a class="fNiv" href="administrator/dashboard.do"><spring:message code="master.page.dashboard" /></a></li>
+		</security:authorize>
+		
+		<security:authorize access="hasRole('CANDIDATE')">
+			<li><a class="fNiv" href="curriculum/list.do"><spring:message code="master.page.curriculum" /></a></li>
+			<li><a class="fNiv" href="application/list.do"><spring:message code="master.page.application" /></a></li>
+		</security:authorize>
+		
+		<security:authorize access="hasRole('COMPANY')">
+			<li><a class="fNiv"><spring:message	code="master.page.company.offer" /></a>
+				<ul>
+					<li class="arrow"></li>
+					<li><a href="offer/company/create.do"><spring:message code="master.page.company.offer.create" /></a></li>
+					<li><a href="offer/company/list.do"><spring:message code="master.page.company.offer.list" /></a></li>					
+				</ul>
+			</li>
+		</security:authorize>
+		
+		<security:authorize access="isAnonymous()">
+			<li><a class="fNiv" href="security/login.do"><spring:message code="master.page.login" /></a></li>
+			<li><a class="fNiv" href="candidate/register.do"><spring:message code="master.page.register.candidate"/></a></li>
+			<li><a class="fNiv" href="company/register.do"><spring:message code="master.page.register.company"/></a></li>
+		</security:authorize>
+		
+		<security:authorize access="isAuthenticated()">
+			<li>
+				<a class="fNiv"> 
+					<spring:message code="master.page.profile" /> 
+			        (<security:authentication property="principal.username" />)
+				</a>
+				<ul>
+					<li class="arrow"></li>	
+					<li><a href="actor/seeProfile.do"><spring:message code="master.page.actor.profile" /></a></li>				
+					<li><a href="j_spring_security_logout"><spring:message code="master.page.logout" /> </a></li>
+				</ul>
+			</li>
+		</security:authorize>
+	</ul>
+</div>
+
+<div>
+	<a href="?language=en">en</a> | <a href="?language=es">es</a>
+</div>
+
